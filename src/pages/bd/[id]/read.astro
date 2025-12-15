@@ -2,72 +2,64 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Navbar from '../../../components/Navbar.astro';
 import BDReader from '../../../components/BDReader';
+import { supabase } from '../../../lib/supabase';
 
 export async function getStaticPaths() {
-  return [
-    { params: { id: '1' } },
-    { params: { id: '2' } },
-    { params: { id: '3' } }
-  ];
+  const { data: stories } = await supabase
+    .from('stories')
+    .select('id')
+    .eq('type', 'comic')
+    .eq('status', 'published');
+  
+  return (stories || []).map((s: any) => ({
+    params: { id: s.id }
+  }));
 }
 
 const { id } = Astro.params;
 
-// Simulation de données - à remplacer par Supabase
+// Récupérer les données depuis Supabase
+const { data: bdData } = await supabase
+  .from('stories')
+  .select(`
+    *,
+    users!stories_author_id_fkey (username, avatar_url),
+    chapters (id, title, chapter_number, images)
+  `)
+  .eq('id', id)
+  .eq('type', 'comic')
+  .eq('status', 'published')
+  .single();
+
+if (!bdData) {
+  return Astro.redirect('/404');
+}
+
 const bd = {
-  id: id,
-  title: 'Le Dernier Gardien',
+  id: bdData.id,
+  title: bdData.title,
   author: {
-    username: 'ShadowArtist',
-    avatar_url: null
+    username: bdData.users?.username || 'Anonyme',
+    avatar_url: bdData.users?.avatar_url
   },
-  description: 'Dans un futur cyberpunk, le dernier gardien de l\'ancienne magie doit protéger les secrets du passé.',
-  genre: 'Sci-Fi',
-  chapters: [
-    {
-      id: '1',
-      number: 1,
-      title: 'Chapitre 1: L\'Éveil',
-      pages: [
-        'https://images.unsplash.com/photo-1551269901-5c5e14c25df7?w=800&h=1200&fit=crop',
-        'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&h=1200&fit=crop',
-        'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&h=1200&fit=crop',
-        'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&h=1200&fit=crop',
-        'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&h=1200&fit=crop',
-        'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=1200&fit=crop',
-        'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&h=1200&fit=crop',
-        'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=1200&fit=crop',
-      ]
-    },
-    {
-      id: '2',
-      number: 2,
-      title: 'Chapitre 2: La Révélation',
-      pages: [
-        'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=1200&fit=crop',
-        'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&h=1200&fit=crop',
-        'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=1200&fit=crop',
-        'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&h=1200&fit=crop',
-        'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&h=1200&fit=crop',
-      ]
-    },
-    {
-      id: '3',
-      number: 3,
-      title: 'Chapitre 3: Le Combat Final',
-      pages: [
-        'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&h=1200&fit=crop',
-        'https://images.unsplash.com/photo-1551269901-5c5e14c25df7?w=800&h=1200&fit=crop',
-        'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&h=1200&fit=crop',
-        'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=1200&fit=crop',
-      ]
-    }
-  ],
-  totalChapters: 3
+  description: bdData.description || '',
+  genre: bdData.genre,
+  chapters: (bdData.chapters || []).map((ch: any) => ({
+    id: ch.id,
+    number: ch.chapter_number,
+    title: ch.title,
+    pages: ch.images || []
+  })).sort((a: any, b: any) => a.number - b.number)
 };
 
-// Par défaut, on affiche le premier chapitre
-const currentChapter = bd.chapters[0];
+// Rediriger vers 404 si pas de chapitres
+if (bd.chapters.length === 0) {
+  return Astro.redirect('/404');
+}
+
+const firstChapter = bd.chapters[0];
+const currentChapter = firstChapter;
+const totalChapters = bd.chapters.length;
 ---
 
 <BaseLayout title={`${bd.title} - Lecture`} description={bd.description}>
@@ -122,7 +114,7 @@ const currentChapter = bd.chapters[0];
         pages={currentChapter.pages} 
         title={bd.title}
         chapterTitle={currentChapter.title}
-        hasNextChapter={currentChapter.number < bd.totalChapters}
+        hasNextChapter={currentChapter.number < totalChapters}
         hasPrevChapter={currentChapter.number > 1}
       />
     </section>

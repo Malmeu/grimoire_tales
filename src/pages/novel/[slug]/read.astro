@@ -2,96 +2,64 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Navbar from '../../../components/Navbar.astro';
 import NovelReader from '../../../components/NovelReader';
+import { supabase } from '../../../lib/supabase';
 
 export async function getStaticPaths() {
-  return [
-    { params: { slug: 'chroniques-crepuscule-eternel' } },
-    { params: { slug: 'ombre-du-neant' } },
-    { params: { slug: 'la-derniere-lueur' } }
-  ];
+  const { data: stories } = await supabase
+    .from('stories')
+    .select('slug')
+    .eq('type', 'novel')
+    .eq('status', 'published');
+  
+  return (stories || []).map((s: any) => ({
+    params: { slug: s.slug }
+  }));
 }
 
 const { slug } = Astro.params;
 
-// Simulation de données - à remplacer par Supabase
+// Récupérer les données depuis Supabase
+const { data: novelData } = await supabase
+  .from('stories')
+  .select(`
+    *,
+    users!stories_author_id_fkey (username, avatar_url),
+    chapters (id, title, chapter_number, content)
+  `)
+  .eq('slug', slug)
+  .eq('type', 'novel')
+  .eq('status', 'published')
+  .single();
+
+if (!novelData) {
+  return Astro.redirect('/404');
+}
+
+const chapters = (novelData.chapters || []).sort((a: any, b: any) => a.chapter_number - b.chapter_number);
+
+if (chapters.length === 0) {
+  return Astro.redirect('/404');
+}
+
 const novel = {
-  id: '1',
-  title: 'Les Chroniques du Crépuscule Éternel',
-  slug: slug,
+  id: novelData.id,
+  title: novelData.title,
+  slug: novelData.slug,
   author: {
-    username: 'DarkScribe',
-    avatar_url: null
+    username: novelData.users?.username || 'Anonyme',
+    avatar_url: novelData.users?.avatar_url
   },
-  description: 'Dans un monde où la lumière a disparu depuis des siècles, un jeune mage découvre un ancien grimoire qui pourrait tout changer...',
-  coverUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&h=1200&fit=crop',
-  genre: 'Dark Fantasy',
-  totalChapters: 5
+  description: novelData.description || '',
+  coverUrl: novelData.cover_url,
+  genre: novelData.genre,
+  totalChapters: chapters.length
 };
 
+const firstChapter = chapters[0];
 const chapter = {
-  number: 1,
-  title: 'Prologue: La Nuit Éternelle',
-  content: `
-La brume s'élevait des ruines anciennes, enveloppant les pierres millénaires d'un voile spectral. Kael observait le paysage désolé depuis le sommet de la tour effondrée, ses yeux perçant l'obscurité perpétuelle qui régnait sur ce monde.
-
-> "Dans les ténèbres, seuls ceux qui portent la lumière en eux peuvent espérer survivre."
-
-Ces mots de son maître résonnaient encore dans son esprit, même après toutes ces années. Le vieux sage avait disparu lors de la Grande Extinction, comme tant d'autres. Mais son enseignement demeurait, gravé dans la mémoire de son dernier apprenti.
-
-## L'Appel des Ombres
-
-Les créatures de la nuit commençaient à s'agiter. Kael pouvait sentir leur présence, une pression froide contre sa conscience. Elles étaient attirées par la magie qui coulait dans ses veines – un don rare dans ce monde où la lumière avait été bannie.
-
-Il serra le grimoire contre sa poitrine. Ce livre, découvert dans les profondeurs d'une crypte oubliée, contenait des secrets que personne n'avait osé dévoiler depuis des siècles. Des incantations capables de ramener la lumière... ou de plonger le monde dans une obscurité encore plus profonde.
-
----
-
-Le vent hurlait à travers les décombres, portant avec lui les échos d'un passé révolu. Kael ferma les yeux et se concentra sur le flux d'énergie qui l'entourait. Quelque part, au-delà des montagnes de cendres, une lueur persistait. Faible, vacillante, mais réelle.
-
-*C'était là qu'il devait aller.*
-
-## Le Premier Pas
-
-Sans un regard en arrière, il descendit les marches usées de la tour. Chaque pas l'éloignait de tout ce qu'il avait connu, mais le rapprochait de son destin. Le grimoire pulsait doucement contre son cœur, comme s'il approuvait sa décision.
-
-Les ombres s'écartèrent sur son passage, non pas par peur, mais par respect. Elles reconnaissaient en lui quelque chose d'ancien, quelque chose qui avait existé avant même que les ténèbres ne s'abattent sur le monde.
-
-**La quête avait commencé.**
-
-La route s'étendait devant lui, sinueuse et incertaine. Des arbres morts bordaient le chemin, leurs branches squelettiques tendues vers un ciel sans étoiles. Dans ce monde de ténèbres perpétuelles, le temps n'avait plus de sens. Les jours et les nuits se confondaient en une éternité grise.
-
-Kael avançait d'un pas régulier, guidé par une intuition qu'il ne pouvait expliquer. Le grimoire semblait connaître le chemin, ses pages bruissant doucement à chaque intersection, comme pour lui indiquer la direction à suivre.
-
-## Les Murmures de l'Ancien Monde
-
-Au détour d'un sentier oublié, il découvrit les vestiges d'un village. Les maisons, autrefois pleines de vie, n'étaient plus que des coquilles vides. Des jouets d'enfants gisaient dans la poussière, témoins silencieux d'une époque révolue.
-
-> "Avant la Grande Extinction, ce lieu s'appelait Aelindor," murmura une voix dans son esprit.
-
-Kael sursauta. Ce n'était pas sa propre pensée. Le grimoire... lui parlait ?
-
-*"Ne crains pas, jeune porteur. Je suis Malachar, gardien de ce savoir. Mon essence est liée à ces pages depuis des millénaires."*
-
-Le mage resta immobile, le cœur battant. Un esprit ancien habitait le livre qu'il portait. Cette révélation changeait tout.
-
----
-
-Les heures passèrent – ou étaient-ce des jours ? – tandis que Kael traversait les terres désolées. Malachar lui racontait l'histoire du monde d'avant, quand le soleil brillait encore et que la magie coulait librement.
-
-La Grande Extinction n'avait pas été un accident. C'était le résultat d'une guerre entre les Anciens, des êtres de pouvoir qui avaient joué avec des forces qu'ils ne comprenaient pas. Dans leur arrogance, ils avaient déchiré le voile entre les mondes, laissant entrer les Ténèbres Éternelles.
-
-## L'Espoir Interdit
-
-*"Il existe un moyen de réparer ce qui a été brisé,"* révéla Malachar. *"Mais le prix à payer est immense. Es-tu prêt à tout sacrifier pour ramener la lumière ?"*
-
-Kael contempla l'horizon sans fin, où les ombres dansaient leur ballet éternel. Quelque part, au-delà de cette obscurité, des gens souffraient. Des enfants naissaient sans jamais connaître la chaleur du soleil. Des vieillards mouraient en rêvant d'un ciel bleu qu'ils n'avaient vu que dans les légendes.
-
-"Oui," répondit-il d'une voix ferme. "Je suis prêt."
-
-Le grimoire s'illumina brièvement, une lueur dorée qui perça les ténèbres l'espace d'un instant. Puis tout redevint sombre, mais quelque chose avait changé. Un lien s'était formé entre le mage et l'esprit ancien.
-
-**Leur voyage ne faisait que commencer.**
-  `
+  number: firstChapter.chapter_number,
+  title: firstChapter.title,
+  content: firstChapter.content || ''
 };
 ---
 

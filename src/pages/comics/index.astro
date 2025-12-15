@@ -27,44 +27,8 @@ const { data: comics, error } = await supabase
   .eq('status', 'published')
   .order('created_at', { ascending: false });
 
-// Données de fallback si pas de données Supabase
-const fallbackComics = [
-  {
-    id: '1',
-    title: 'Le Dernier Gardien',
-    slug: 'le-dernier-gardien',
-    description: 'Dans un futur cyberpunk, le dernier gardien de l\'ancienne magie doit protéger les secrets du passé.',
-    cover_url: 'https://images.unsplash.com/photo-1551269901-5c5e14c25df7?w=800&h=1200&fit=crop',
-    genre: 'Sci-Fi',
-    tags: ['cyberpunk', 'magie', 'futur'],
-    views: 28500,
-    users: { username: 'ShadowArtist', avatar_url: null }
-  },
-  {
-    id: '2',
-    title: 'Chroniques de l\'Ombre',
-    slug: 'chroniques-ombre',
-    description: 'Une aventure épique dans un monde de ténèbres où seuls les plus braves survivent.',
-    cover_url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&h=1200&fit=crop',
-    genre: 'Dark Fantasy',
-    tags: ['fantasy', 'aventure', 'sombre'],
-    views: 15200,
-    users: { username: 'DarkScribe', avatar_url: null }
-  },
-  {
-    id: '3',
-    title: 'Néon Dreams',
-    slug: 'neon-dreams',
-    description: 'Dans les rues de Neo-Tokyo, une hackeuse découvre un secret qui pourrait changer le monde.',
-    cover_url: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&h=1200&fit=crop',
-    genre: 'Cyberpunk',
-    tags: ['cyberpunk', 'hacker', 'japon'],
-    views: 32100,
-    users: { username: 'NeonWriter', avatar_url: null }
-  }
-];
-
-const displayComics = (comics && comics.length > 0) ? comics : fallbackComics;
+// Pas de fallback - afficher les vraies données uniquement
+const displayComics = comics || [];
 
 const formatViews = (num: number) => {
   if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';

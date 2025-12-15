@@ -2,72 +2,79 @@
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import Navbar from '../../../../components/Navbar.astro';
 import BDReader from '../../../../components/BDReader';
+import { supabase } from '../../../../lib/supabase';
 
 export async function getStaticPaths() {
-  const bds = ['1', '2', '3'];
-  const paths = [];
+  const { data: chapters } = await supabase
+    .from('chapters')
+    .select(`
+      chapter_number,
+      story_id,
+      stories!inner (id, type, status)
+    `)
+    .eq('stories.type', 'comic')
+    .eq('stories.status', 'published');
   
-  for (const id of bds) {
-    for (let i = 1; i <= 3; i++) {
-      paths.push({ params: { id, number: i.toString() } });
+  return (chapters || []).map((ch: any) => ({
+    params: { 
+      id: ch.story_id, 
+      number: ch.chapter_number.toString() 
     }
-  }
-  
-  return paths;
+  }));
 }
 
 const { id, number } = Astro.params;
 const chapterNumber = parseInt(number || '1');
 
-// Simulation de données - à remplacer par Supabase
+// Récupérer les données depuis Supabase
+const { data: bdData } = await supabase
+  .from('stories')
+  .select(`
+    *,
+    users!stories_author_id_fkey (username, avatar_url)
+  `)
+  .eq('id', id)
+  .eq('type', 'comic')
+  .eq('status', 'published')
+  .single();
+
+if (!bdData) {
+  return Astro.redirect('/404');
+}
+
+const { data: chapterData } = await supabase
+  .from('chapters')
+  .select('*')
+  .eq('story_id', id)
+  .eq('chapter_number', chapterNumber)
+  .single();
+
+if (!chapterData) {
+  return Astro.redirect('/404');
+}
+
+const { count: totalChapters } = await supabase
+  .from('chapters')
+  .select('*', { count: 'exact', head: true })
+  .eq('story_id', id);
+
 const bd = {
-  id: id,
-  title: 'Le Dernier Gardien',
+  id: bdData.id,
+  title: bdData.title,
   author: {
-    username: 'ShadowArtist',
-    avatar_url: null
+    username: bdData.users?.username || 'Anonyme',
+    avatar_url: bdData.users?.avatar_url
   },
-  description: 'Dans un futur cyberpunk, le dernier gardien de l\'ancienne magie doit protéger les secrets du passé.',
-  genre: 'Sci-Fi',
-  totalChapters: 3
+  description: bdData.description || '',
+  genre: bdData.genre,
+  totalChapters: totalChapters || 0
 };
 
-const chaptersData: Record<number, { title: string; pages: string[] }> = {
-  1: {
-    title: 'Chapitre 1: L\'Éveil',
-    pages: [
-      'https://images.unsplash.com/photo-1551269901-5c5e14c25df7?w=800&h=1200&fit=crop',
-      'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&h=1200&fit=crop',
-      'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&h=1200&fit=crop',
-      'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&h=1200&fit=crop',
-      'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&h=1200&fit=crop',
-      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=1200&fit=crop',
-      'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&h=1200&fit=crop',
-      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=1200&fit=crop',
-    ]
-  },
-  2: {
-    title: 'Chapitre 2: La Révélation',
-    pages: [
-      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=1200&fit=crop',
-      'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&h=1200&fit=crop',
-      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=1200&fit=crop',
-      'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&h=1200&fit=crop',
-      'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&h=1200&fit=crop',
-    ]
-  },
-  3: {
-    title: 'Chapitre 3: Le Combat Final',
-    pages: [
-      'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&h=1200&fit=crop',
-      'https://images.unsplash.com/photo-1551269901-5c5e14c25df7?w=800&h=1200&fit=crop',
-      'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&h=1200&fit=crop',
-      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=1200&fit=crop',
-    ]
-  }
+const currentChapter = {
+  title: chapterData.title,
+  pages: chapterData.images || []
 };
 
-const currentChapter = chaptersData[chapterNumber] || chaptersData[1];
 const hasNextChapter = chapterNumber < bd.totalChapters;
 const hasPrevChapter = chapterNumber > 1;
 ---

@@ -2,228 +2,83 @@
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import Navbar from '../../../../components/Navbar.astro';
 import NovelReader from '../../../../components/NovelReader';
+import { supabase } from '../../../../lib/supabase';
 
 export async function getStaticPaths() {
-  const novels = [
-    'chroniques-crepuscule-eternel',
-    'ombre-du-neant', 
-    'la-derniere-lueur'
-  ];
+  const { data: chapters } = await supabase
+    .from('chapters')
+    .select(`
+      chapter_number,
+      stories!inner (slug, type, status)
+    `)
+    .eq('stories.type', 'novel')
+    .eq('stories.status', 'published');
   
-  const paths: { params: { slug: string; number: string } }[] = [];
-  for (const slug of novels) {
-    for (let i = 1; i <= 5; i++) {
-      paths.push({ params: { slug, number: i.toString() } });
+  return (chapters || []).map((ch: any) => ({
+    params: { 
+      slug: ch.stories.slug, 
+      number: ch.chapter_number.toString() 
     }
-  }
-  
-  return paths;
+  }));
 }
 
 const { slug, number } = Astro.params;
 const chapterNumber = parseInt(number || '1');
 
-// Simulation de données - à remplacer par Supabase
+// Récupérer les données depuis Supabase
+const { data: novelData } = await supabase
+  .from('stories')
+  .select('id, title, slug')
+  .eq('slug', slug)
+  .eq('type', 'novel')
+  .eq('status', 'published')
+  .single();
+
+if (!novelData) {
+  return Astro.redirect('/404');
+}
+
+const { data: chapterData } = await supabase
+  .from('chapters')
+  .select('*')
+  .eq('story_id', novelData.id)
+  .eq('chapter_number', chapterNumber)
+  .single();
+
+if (!chapterData) {
+  return Astro.redirect('/404');
+}
+
+const { count: totalChapters } = await supabase
+  .from('chapters')
+  .select('*', { count: 'exact', head: true })
+  .eq('story_id', novelData.id);
+
 const novel = {
-  id: '1',
-  title: 'Les Chroniques du Crépuscule Éternel',
-  slug: slug,
-  totalChapters: 5
+  id: novelData.id,
+  title: novelData.title,
+  slug: novelData.slug,
+  totalChapters: totalChapters || 0
 };
 
-const chaptersContent: Record<number, { title: string; content: string }> = {
-  1: {
-    title: 'Prologue: La Nuit Éternelle',
-    content: `
-La brume s'élevait des ruines anciennes, enveloppant les pierres millénaires d'un voile spectral. Kael observait le paysage désolé depuis le sommet de la tour effondrée, ses yeux perçant l'obscurité perpétuelle qui régnait sur ce monde.
-
-> "Dans les ténèbres, seuls ceux qui portent la lumière en eux peuvent espérer survivre."
-
-Ces mots de son maître résonnaient encore dans son esprit, même après toutes ces années. Le vieux sage avait disparu lors de la Grande Extinction, comme tant d'autres. Mais son enseignement demeurait, gravé dans la mémoire de son dernier apprenti.
-
-## L'Appel des Ombres
-
-Les créatures de la nuit commençaient à s'agiter. Kael pouvait sentir leur présence, une pression froide contre sa conscience. Elles étaient attirées par la magie qui coulait dans ses veines – un don rare dans ce monde où la lumière avait été bannie.
-
-Il serra le grimoire contre sa poitrine. Ce livre, découvert dans les profondeurs d'une crypte oubliée, contenait des secrets que personne n'avait osé dévoiler depuis des siècles. Des incantations capables de ramener la lumière... ou de plonger le monde dans une obscurité encore plus profonde.
-
----
-
-Le vent hurlait à travers les décombres, portant avec lui les échos d'un passé révolu. Kael ferma les yeux et se concentra sur le flux d'énergie qui l'entourait. Quelque part, au-delà des montagnes de cendres, une lueur persistait. Faible, vacillante, mais réelle.
-
-*C'était là qu'il devait aller.*
-
-## Le Premier Pas
-
-Sans un regard en arrière, il descendit les marches usées de la tour. Chaque pas l'éloignait de tout ce qu'il avait connu, mais le rapprochait de son destin. Le grimoire pulsait doucement contre son cœur, comme s'il approuvait sa décision.
-
-Les ombres s'écartèrent sur son passage, non pas par peur, mais par respect. Elles reconnaissaient en lui quelque chose d'ancien, quelque chose qui avait existé avant même que les ténèbres ne s'abattent sur le monde.
-
-**La quête avait commencé.**
-    `
-  },
-  2: {
-    title: 'Chapitre 1: L\'Éveil',
-    content: `
-Le chemin serpentait à travers une forêt pétrifiée, où les arbres se dressaient comme des sentinelles silencieuses. Leurs branches, figées dans une danse macabre, semblaient vouloir attraper quiconque osait s'aventurer dans leur domaine.
-
-Kael marchait depuis ce qui lui semblait être des jours. La fatigue pesait sur ses épaules, mais il refusait de s'arrêter. Chaque instant de repos était un instant où les Ténèbres gagnaient du terrain.
-
-## La Rencontre
-
-> "Tu n'es pas comme les autres," dit une voix féminine dans l'obscurité.
-
-Le mage s'arrêta net, sa main se posant instinctivement sur le grimoire. Une silhouette émergea des ombres – une jeune femme aux cheveux argentés, dont les yeux brillaient d'une lueur surnaturelle.
-
-"Je suis Lyra," continua-t-elle. "Et je t'attendais."
-
----
-
-Elle était une Voyante, l'une des rares personnes capables de percevoir les fils du destin. Son don lui avait montré l'arrivée de Kael, ainsi que le rôle crucial qu'il jouerait dans les événements à venir.
-
-"Le grimoire que tu portes," dit-elle en désignant le livre, "est l'un des sept Codex Primordiaux. Il contient une partie de la clé pour restaurer l'équilibre."
-
-## Les Sept Codex
-
-*"Elle dit vrai,"* confirma Malachar dans l'esprit de Kael. *"Mais rassembler les sept Codex sera une tâche périlleuse. Chacun est gardé par des forces anciennes qui ne les abandonneront pas facilement."*
-
-Lyra hocha la tête, comme si elle avait entendu les paroles de l'esprit. "Je connais l'emplacement de deux autres Codex. Si tu acceptes mon aide, nous pourrions..."
-
-"Pourquoi m'aiderais-tu ?" l'interrompit Kael, méfiant.
-
-La Voyante sourit tristement. "Parce que j'ai vu ce qui arrivera si nous échouons. Et crois-moi, c'est un avenir que personne ne souhaite."
-
-**Leur alliance était scellée.**
-    `
-  },
-  3: {
-    title: 'Chapitre 2: Le Grimoire Interdit',
-    content: `
-Les ruines du Temple de l'Aube se dressaient devant eux, vestiges d'une époque où la lumière régnait encore sur le monde. Autrefois, ce lieu avait été un sanctuaire dédié au soleil, où les prêtres célébraient chaque lever du jour.
-
-Maintenant, il n'était plus qu'un tombeau de pierre et de souvenirs.
-
-## L'Entrée du Sanctuaire
-
-> "Les gardiens de ce temple ne sont pas morts avec la lumière," avertit Lyra. "Ils ont été transformés en quelque chose... d'autre."
-
-Kael sentit un frisson parcourir son échine. Le grimoire vibrait contre sa poitrine, réagissant à la présence d'un autre Codex à proximité.
-
-*"Sois prudent, jeune porteur,"* murmura Malachar. *"Ce qui nous attend ici dépasse tout ce que tu as affronté jusqu'à présent."*
-
----
-
-Ils pénétrèrent dans le temple par une brèche dans le mur est. L'intérieur était plongé dans une obscurité absolue, si dense qu'elle semblait avoir une substance propre. Même les yeux de Lyra, habitués aux ténèbres, peinaient à percer ce voile.
-
-"Utilise le grimoire," suggéra la Voyante. "Sa lumière devrait nous guider."
-
-Kael hésita. Utiliser la magie du Codex attirerait l'attention des gardiens. Mais sans lumière, ils étaient perdus.
-
-## Le Prix de la Lumière
-
-Il ouvrit le livre, et les pages s'illuminèrent d'une lueur dorée. Les ténèbres reculèrent, révélant un spectacle à la fois magnifique et terrifiant.
-
-Des statues de guerriers bordaient le couloir principal, leurs visages figés dans des expressions de dévotion. Mais ce n'étaient pas de simples sculptures – c'étaient les anciens gardiens, pétrifiés par la malédiction qui avait frappé ce lieu.
-
-*"Ils s'éveilleront si nous approchons du Codex,"* prévint Malachar. *"Prépare-toi au combat."*
-
-**Le sanctuaire révélait ses secrets... et ses dangers.**
-    `
-  },
-  4: {
-    title: 'Chapitre 3: Ombres et Secrets',
-    content: `
-Le combat avait été brutal. Les gardiens pétrifiés s'étaient éveillés à leur approche, leurs corps de pierre animés par une volonté ancienne. Kael avait dû puiser dans des réserves de magie qu'il ignorait posséder.
-
-Maintenant, ils se tenaient devant l'autel central, où reposait le deuxième Codex – le Livre des Ombres.
-
-## La Révélation
-
-> "Ne le touche pas directement," avertit Lyra. "Ce Codex est différent du tien. Il a été corrompu par les Ténèbres."
-
-*"Elle a raison,"* confirma Malachar. *"Le Livre des Ombres contient le savoir des Anciens qui ont causé la Grande Extinction. Son pouvoir est immense, mais dangereux."*
-
-Kael observa le livre noir qui pulsait d'une énergie malveillante. Comment pouvaient-ils utiliser quelque chose d'aussi corrompu pour restaurer la lumière ?
-
----
-
-"Il existe un moyen," dit Lyra, comme si elle lisait dans ses pensées. "Les Codex peuvent être purifiés, mais cela nécessite un sacrifice."
-
-"Quel genre de sacrifice ?"
-
-La Voyante détourna le regard. "Chaque Codex corrompu demande une partie de l'âme de celui qui le purifie. Plus le livre est sombre, plus le prix est élevé."
-
-## Le Choix
-
-Kael contempla le Livre des Ombres. S'il le purifiait, il perdrait une partie de lui-même. Mais s'il le laissait, les Ténèbres continueraient à se répandre.
-
-*"C'est ton choix, jeune porteur,"* dit Malachar. *"Je ne peux pas le faire à ta place. Mais sache que quel que soit ton choix, je serai à tes côtés."*
-
-Le mage tendit la main vers le livre noir. La douleur fut immédiate et déchirante, comme si on arrachait une partie de son être. Mais il tint bon, canalisant sa volonté à travers le grimoire doré.
-
-Lentement, les ténèbres qui enveloppaient le Livre des Ombres commencèrent à se dissiper...
-
-**Le prix avait été payé.**
-    `
-  },
-  5: {
-    title: 'Chapitre 4: La Prophétie',
-    content: `
-Trois Codex. Ils en possédaient maintenant trois sur sept. Mais chaque victoire avait son prix, et Kael sentait le poids de ses sacrifices peser sur son âme.
-
-Lyra l'observait avec inquiétude. "Tu changes," dit-elle un soir, alors qu'ils campaient dans les ruines d'une ancienne bibliothèque. "La lumière dans tes yeux s'affaiblit."
-
-## Les Mots Anciens
-
-> "C'est le prix de la purification," répondit Kael d'une voix lasse. "Chaque Codex que je sauve me coûte un peu plus de moi-même."
-
-*"Il existe une autre voie,"* intervint Malachar. *"Une prophétie ancienne parle d'un rituel capable de restaurer ce qui a été perdu. Mais pour l'accomplir, nous devons d'abord rassembler tous les Codex."*
-
-La Voyante fronça les sourcils. "Je connais cette prophétie. Elle parle aussi d'un sacrifice ultime – celui du porteur lui-même."
-
----
-
-Le silence s'installa entre eux. Kael avait toujours su que sa quête pourrait lui coûter la vie. Mais l'entendre confirmé par une prophétie ancienne rendait cette possibilité terriblement réelle.
-
-"Et si je refuse ?" demanda-t-il.
-
-"Alors les Ténèbres Éternelles demeureront," répondit Lyra. "Le monde continuera à sombrer, génération après génération, jusqu'à ce qu'il ne reste plus rien."
-
-## L'Acceptation
-
-Kael ferma les yeux et pensa à tous ceux qui souffraient dans l'obscurité. Les enfants qui n'avaient jamais vu le soleil. Les vieillards qui mouraient en rêvant de lumière. Les familles séparées par les créatures de la nuit.
-
-*"Le choix t'appartient,"* dit doucement Malachar. *"Mais sache que ton sacrifice ne serait pas vain. Tu deviendrais la lumière elle-même, éternelle et pure."*
-
-"Alors continuons," décida Kael en se levant. "Trouvons les quatre Codex restants. Et quand le moment viendra..."
-
-Il laissa sa phrase en suspens, mais Lyra comprit. Elle hocha la tête, les larmes aux yeux.
-
-**La prophétie s'accomplirait.**
-
----
-
-*Fin du Tome 1*
-
-*L'aventure continue dans "Les Chroniques du Crépuscule Éternel - Tome 2: L'Aube Nouvelle"*
-    `
-  }
+const currentChapter = {
+  title: chapterData.title,
+  content: chapterData.content || ''
 };
 
-const chapter = chaptersContent[chapterNumber] || chaptersContent[1];
 const hasNextChapter = chapterNumber < novel.totalChapters;
 const hasPrevChapter = chapterNumber > 1;
 ---
 
-<BaseLayout title={`${chapter.title} - ${novel.title}`}>
+<BaseLayout title={`${currentChapter.title} - ${novel.title}`}>
   <Navbar />
   
   <main class="pt-20 min-h-screen">
     <NovelReader 
       client:load 
-      content={chapter.content}
+      content={currentChapter.content}
       title={novel.title}
-      chapterTitle={chapter.title}
+      chapterTitle={currentChapter.title}
       chapterNumber={chapterNumber}
       totalChapters={novel.totalChapters}
       storySlug={novel.slug || ''}

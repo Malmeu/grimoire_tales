@@ -3,44 +3,62 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Navbar from '../../components/Navbar.astro';
 import Footer from '../../components/Footer.astro';
 import CommentFeed from '../../components/CommentFeed';
+import { supabase } from '../../lib/supabase';
 
-// Générer des pages statiques pour les stories
+// Générer des pages statiques pour les stories publiées
 export async function getStaticPaths() {
-  return [
-    { params: { slug: 'chroniques-crepuscule-eternel' } },
-    { params: { slug: 'ombre-du-neant' } },
-    { params: { slug: 'la-derniere-lueur' } }
-  ];
+  const { data: stories } = await supabase
+    .from('stories')
+    .select('slug')
+    .eq('status', 'published');
+  
+  return (stories || []).map((story: any) => ({
+    params: { slug: story.slug }
+  }));
 }
 
 const { slug } = Astro.params;
 
-// Simulation de données - à remplacer par Supabase
+// Récupérer les données depuis Supabase
+const { data: storyData } = await supabase
+  .from('stories')
+  .select(`
+    *,
+    users!stories_author_id_fkey (username, avatar_url, bio_geek),
+    chapters (id, title, chapter_number)
+  `)
+  .eq('slug', slug)
+  .eq('status', 'published')
+  .single();
+
+// Rediriger si l'histoire n'existe pas
+if (!storyData) {
+  return Astro.redirect('/404');
+}
+
 const story = {
-  id: '1',
-  title: 'Les Chroniques du Crépuscule Éternel',
-  slug: slug,
+  id: storyData.id,
+  title: storyData.title,
+  slug: storyData.slug,
   author: {
-    username: 'DarkScribe',
-    avatar_url: null,
-    bio: 'Auteur passionné de dark fantasy depuis 10 ans.'
+    username: storyData.users?.username || 'Anonyme',
+    avatar_url: storyData.users?.avatar_url,
+    bio: storyData.users?.bio_geek || ''
   },
-  description: 'Dans un monde où la lumière a disparu depuis des siècles, un jeune mage découvre un ancien grimoire qui pourrait tout changer...',
-  coverUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&h=1200&fit=crop',
-  genre: 'Dark Fantasy',
-  tags: ['magie', 'dragons', 'guerre', 'mystère'],
-  type: 'novel',
-  views: 45230,
-  rating: 4.8,
-  chapters: [
-    { id: '1', title: 'Prologue: La Nuit Éternelle', number: 1 },
-    { id: '2', title: 'Chapitre 1: L\'Éveil', number: 2 },
-    { id: '3', title: 'Chapitre 2: Le Grimoire Interdit', number: 3 },
-    { id: '4', title: 'Chapitre 3: Ombres et Secrets', number: 4 },
-    { id: '5', title: 'Chapitre 4: La Prophétie', number: 5 },
-  ],
-  created_at: '2024-01-15',
-  updated_at: '2024-03-20'
+  description: storyData.description || '',
+  coverUrl: storyData.cover_url,
+  genre: storyData.genre,
+  tags: storyData.tags || [],
+  type: storyData.type,
+  views: storyData.views || 0,
+  rating: 0,
+  chapters: (storyData.chapters || []).map((ch: any) => ({
+    id: ch.id,
+    title: ch.title,
+    number: ch.chapter_number
+  })).sort((a: any, b: any) => a.number - b.number),
+  created_at: storyData.created_at,
+  updated_at: storyData.updated_at
 };
 
 const formatViews = (num: number) => {

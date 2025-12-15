@@ -2,30 +2,49 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import { supabase } from '../lib/supabase';
 
-const weeklyTop = [
-  { rank: 1, title: 'Les Chroniques du Crépuscule', author: 'DarkScribe', views: 12500, likes: 890, type: 'novel' },
-  { rank: 2, title: 'Le Dernier Gardien', author: 'ShadowArtist', views: 9800, likes: 720, type: 'comic' },
-  { rank: 3, title: 'Ombre et Lumière', author: 'MysticWriter', views: 8200, likes: 650, type: 'novel' },
-  { rank: 4, title: 'Cyber Samurai 2099', author: 'NeonBlade', views: 7500, likes: 580, type: 'comic' },
-  { rank: 5, title: 'La Guilde des Ombres', author: 'SilentAssassin', views: 6900, likes: 510, type: 'novel' },
-];
+// Récupérer les histoires les plus vues (top mensuel)
+const { data: topStoriesData } = await supabase
+  .from('stories')
+  .select(`
+    id,
+    title,
+    slug,
+    type,
+    views,
+    users!stories_author_id_fkey (username)
+  `)
+  .eq('status', 'published')
+  .order('views', { ascending: false })
+  .limit(5);
 
-const monthlyTop = [
-  { rank: 1, title: 'Les Chroniques du Crépuscule', author: 'DarkScribe', views: 45230, likes: 3200, type: 'novel' },
-  { rank: 2, title: 'Royaume des Âmes Perdues', author: 'NightTeller', views: 38000, likes: 2800, type: 'book' },
-  { rank: 3, title: 'Le Dernier Gardien', author: 'ShadowArtist', views: 28500, likes: 2100, type: 'comic' },
-  { rank: 4, title: 'Ombre et Lumière', author: 'MysticWriter', views: 25000, likes: 1900, type: 'novel' },
-  { rank: 5, title: 'Cyber Samurai 2099', author: 'NeonBlade', views: 22400, likes: 1700, type: 'comic' },
-];
+// Récupérer les auteurs avec le plus de vues
+const { data: authorsData } = await supabase
+  .from('users')
+  .select('id, username')
+  .limit(5);
 
-const topAuthors = [
-  { rank: 1, username: 'DarkScribe', followers: 5200, stories: 12, totalViews: 125000 },
-  { rank: 2, username: 'ShadowArtist', followers: 4100, stories: 8, totalViews: 98000 },
-  { rank: 3, username: 'MysticWriter', followers: 3800, stories: 15, totalViews: 87000 },
-  { rank: 4, username: 'NightTeller', followers: 3200, stories: 6, totalViews: 72000 },
-  { rank: 5, username: 'NeonBlade', followers: 2900, stories: 10, totalViews: 65000 },
-];
+// Transformer les données
+const weeklyTop = (topStoriesData || []).map((story: any, index: number) => ({
+  rank: index + 1,
+  title: story.title,
+  author: story.users?.username || 'Anonyme',
+  views: story.views || 0,
+  likes: 0,
+  type: story.type,
+  slug: story.slug
+}));
+
+const monthlyTop = weeklyTop; // Même données pour l'instant
+
+const topAuthors = (authorsData || []).map((author: any, index: number) => ({
+  rank: index + 1,
+  username: author.username,
+  followers: 0,
+  stories: 0,
+  totalViews: 0
+}));
 
 const formatNumber = (num: number) => {
   if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';

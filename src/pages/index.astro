@@ -3,65 +3,58 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import StoryCard from '../components/StoryCard.astro';
+import { supabase } from '../lib/supabase';
 
-const featuredStories = [
-  {
-    id: '1',
-    title: 'Les Chroniques du Crépuscule Éternel',
-    slug: 'chroniques-crepuscule-eternel',
-    author: 'DarkScribe',
-    coverUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&h=600&fit=crop',
-    genre: 'Dark Fantasy',
-    tags: ['magie', 'dragons', 'guerre'],
-    type: 'novel' as const,
-    views: 45230,
-    rating: 4.8
-  },
-  {
-    id: '2',
-    title: 'Ombre et Lumière: La Quête',
-    slug: 'ombre-lumiere-quete',
-    author: 'MysticWriter',
-    coverUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400&h=600&fit=crop',
-    genre: 'Fantasy',
-    tags: ['aventure', 'héros', 'mystère'],
-    type: 'novel' as const,
-    views: 32100,
-    rating: 4.5
-  },
-  {
-    id: '3',
-    title: 'Le Dernier Gardien',
-    slug: 'dernier-gardien',
-    author: 'ShadowArtist',
-    coverUrl: 'https://images.unsplash.com/photo-1551269901-5c5e14c25df7?w=400&h=600&fit=crop',
-    genre: 'Sci-Fi',
-    tags: ['cyberpunk', 'IA', 'futur'],
-    type: 'comic' as const,
-    views: 28500,
-    rating: 4.7
-  },
-  {
-    id: '4',
-    title: 'Royaume des Âmes Perdues',
-    slug: 'royaume-ames-perdues',
-    author: 'NightTeller',
-    coverUrl: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&h=600&fit=crop',
-    genre: 'Dark Fantasy',
-    tags: ['necromancien', 'mort', 'rédemption'],
-    type: 'book' as const,
-    views: 19800,
-    rating: 4.3
-  },
-];
+// Récupérer les histoires populaires depuis Supabase
+const { data: storiesData } = await supabase
+  .from('stories')
+  .select(`
+    id,
+    title,
+    slug,
+    cover_url,
+    genre,
+    tags,
+    type,
+    views,
+    users!stories_author_id_fkey (username)
+  `)
+  .eq('status', 'published')
+  .order('views', { ascending: false })
+  .limit(4);
 
+// Récupérer les stats
+const { count: storiesCount } = await supabase
+  .from('stories')
+  .select('*', { count: 'exact', head: true })
+  .eq('status', 'published');
+
+const { count: authorsCount } = await supabase
+  .from('users')
+  .select('*', { count: 'exact', head: true });
+
+// Transformer les données pour le composant StoryCard
+const featuredStories = (storiesData || []).map((story: any) => ({
+  id: story.id,
+  title: story.title,
+  slug: story.slug,
+  author: story.users?.username || 'Anonyme',
+  coverUrl: story.cover_url,
+  genre: story.genre,
+  tags: story.tags || [],
+  type: story.type as 'novel' | 'book' | 'comic',
+  views: story.views || 0,
+  rating: 0
+}));
+
+// Genres statiques (catégories disponibles)
 const genres = [
-  { name: 'Dark Fantasy', icon: '🌑', count: 234 },
-  { name: 'Sci-Fi', icon: '🚀', count: 156 },
-  { name: 'Fantasy', icon: '⚔️', count: 312 },
-  { name: 'Anime', icon: '🎌', count: 189 },
-  { name: 'Gaming', icon: '🎮', count: 145 },
-  { name: 'Horreur', icon: '👻', count: 98 },
+  { name: 'Dark Fantasy', icon: '🌑' },
+  { name: 'Sci-Fi', icon: '🚀' },
+  { name: 'Fantasy', icon: '⚔️' },
+  { name: 'Anime', icon: '🎌' },
+  { name: 'Gaming', icon: '🎮' },
+  { name: 'Horreur', icon: '👻' },
 ];
 ---
 
@@ -116,15 +109,15 @@ const genres = [
         <!-- Stats -->
         <div class="mt-16 grid grid-cols-3 gap-8 max-w-lg mx-auto">
           <div class="text-center">
-            <div class="text-3xl md:text-4xl font-gothic text-gold-old">1.2K+</div>
+            <div class="text-3xl md:text-4xl font-gothic text-gold-old">{storiesCount || 0}</div>
             <div class="text-sm text-parchment/60">Histoires</div>
           </div>
           <div class="text-center">
-            <div class="text-3xl md:text-4xl font-gothic text-gold-old">5K+</div>
+            <div class="text-3xl md:text-4xl font-gothic text-gold-old">{authorsCount || 0}</div>
             <div class="text-sm text-parchment/60">Auteurs</div>
           </div>
           <div class="text-center">
-            <div class="text-3xl md:text-4xl font-gothic text-gold-old">50K+</div>
+            <div class="text-3xl md:text-4xl font-gothic text-gold-old">0</div>
             <div class="text-sm text-parchment/60">Lecteurs</div>
           </div>
         </div>
@@ -180,7 +173,7 @@ const genres = [
               <h3 class="font-gothic text-gold-old group-hover:text-gold-bright transition-colors mb-1">
                 {genre.name}
               </h3>
-              <p class="text-sm text-parchment/50">{genre.count} histoires</p>
+              <p class="text-sm text-parchment/50">Explorer</p>
             </a>
           ))}
         </div>

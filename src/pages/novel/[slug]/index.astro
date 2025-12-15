@@ -3,44 +3,65 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Navbar from '../../../components/Navbar.astro';
 import Footer from '../../../components/Footer.astro';
 import CommentFeed from '../../../components/CommentFeed';
+import { supabase } from '../../../lib/supabase';
 
 export async function getStaticPaths() {
-  return [
-    { params: { slug: 'chroniques-crepuscule-eternel' } },
-    { params: { slug: 'ombre-du-neant' } },
-    { params: { slug: 'la-derniere-lueur' } }
-  ];
+  const { data: stories } = await supabase
+    .from('stories')
+    .select('slug')
+    .eq('type', 'novel')
+    .eq('status', 'published');
+  
+  return (stories || []).map((s: any) => ({
+    params: { slug: s.slug }
+  }));
 }
 
 const { slug } = Astro.params;
 
-// Simulation de données - à remplacer par Supabase
+// Récupérer les données depuis Supabase
+const { data: novelData } = await supabase
+  .from('stories')
+  .select(`
+    *,
+    users!stories_author_id_fkey (username, avatar_url, bio_geek),
+    chapters (id, title, chapter_number, word_count, created_at)
+  `)
+  .eq('slug', slug)
+  .eq('type', 'novel')
+  .eq('status', 'published')
+  .single();
+
+if (!novelData) {
+  return Astro.redirect('/404');
+}
+
 const novel = {
-  id: '1',
-  title: 'Les Chroniques du Crépuscule Éternel',
-  slug: slug,
+  id: novelData.id,
+  title: novelData.title,
+  slug: novelData.slug,
   author: {
-    username: 'DarkScribe',
-    avatar_url: null,
-    bio: 'Auteur passionné de dark fantasy depuis 10 ans.'
+    username: novelData.users?.username || 'Anonyme',
+    avatar_url: novelData.users?.avatar_url,
+    bio: novelData.users?.bio_geek || ''
   },
-  description: 'Dans un monde où la lumière a disparu depuis des siècles, un jeune mage découvre un ancien grimoire qui pourrait tout changer. Une épopée sombre et captivante où magie ancienne et destinée s\'entremêlent dans une quête désespérée pour ramener l\'espoir.',
-  coverUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&h=1200&fit=crop',
-  genre: 'Dark Fantasy',
-  tags: ['magie', 'quête', 'ténèbres', 'prophétie', 'sacrifice'],
-  views: 45230,
-  rating: 4.8,
-  wordCount: 45000,
-  chapters: [
-    { id: '1', number: 1, title: 'Prologue: La Nuit Éternelle', wordCount: 2500, publishedAt: '2024-01-15' },
-    { id: '2', number: 2, title: 'Chapitre 1: L\'Éveil', wordCount: 3200, publishedAt: '2024-01-22' },
-    { id: '3', number: 3, title: 'Chapitre 2: Le Grimoire Interdit', wordCount: 2800, publishedAt: '2024-02-01' },
-    { id: '4', number: 4, title: 'Chapitre 3: Ombres et Secrets', wordCount: 3500, publishedAt: '2024-02-15' },
-    { id: '5', number: 5, title: 'Chapitre 4: La Prophétie', wordCount: 4000, publishedAt: '2024-03-01' },
-  ],
-  status: 'En cours',
-  created_at: '2024-01-15',
-  updated_at: '2024-03-01'
+  description: novelData.description || '',
+  coverUrl: novelData.cover_url,
+  genre: novelData.genre,
+  tags: novelData.tags || [],
+  views: novelData.views || 0,
+  rating: 0,
+  wordCount: (novelData.chapters || []).reduce((acc: number, ch: any) => acc + (ch.word_count || 0), 0),
+  chapters: (novelData.chapters || []).map((ch: any) => ({
+    id: ch.id,
+    number: ch.chapter_number,
+    title: ch.title,
+    wordCount: ch.word_count || 0,
+    publishedAt: ch.created_at
+  })).sort((a: any, b: any) => a.number - b.number),
+  status: novelData.status === 'published' ? 'Publié' : 'En cours',
+  created_at: novelData.created_at,
+  updated_at: novelData.updated_at
 };
 
 const formatViews = (num: number) => {

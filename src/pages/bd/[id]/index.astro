@@ -3,40 +3,63 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Navbar from '../../../components/Navbar.astro';
 import Footer from '../../../components/Footer.astro';
 import CommentFeed from '../../../components/CommentFeed';
+import { supabase } from '../../../lib/supabase';
 
 export async function getStaticPaths() {
-  return [
-    { params: { id: '1' } },
-    { params: { id: '2' } },
-    { params: { id: '3' } }
-  ];
+  const { data: stories } = await supabase
+    .from('stories')
+    .select('id')
+    .eq('type', 'comic')
+    .eq('status', 'published');
+  
+  return (stories || []).map((s: any) => ({
+    params: { id: s.id }
+  }));
 }
 
 const { id } = Astro.params;
 
-// Simulation de données - à remplacer par Supabase
+// Récupérer les données depuis Supabase
+const { data: bdData } = await supabase
+  .from('stories')
+  .select(`
+    *,
+    users!stories_author_id_fkey (username, avatar_url, bio_geek),
+    chapters (id, title, chapter_number, images)
+  `)
+  .eq('id', id)
+  .eq('type', 'comic')
+  .eq('status', 'published')
+  .single();
+
+if (!bdData) {
+  return Astro.redirect('/404');
+}
+
 const bd = {
-  id: id,
-  title: 'Le Dernier Gardien',
+  id: bdData.id,
+  title: bdData.title,
   author: {
-    username: 'ShadowArtist',
-    avatar_url: null,
-    bio: 'Artiste passionné de manga et de BD depuis 15 ans.'
+    username: bdData.users?.username || 'Anonyme',
+    avatar_url: bdData.users?.avatar_url,
+    bio: bdData.users?.bio_geek || ''
   },
-  description: 'Dans un futur cyberpunk, le dernier gardien de l\'ancienne magie doit protéger les secrets du passé. Une aventure épique mêlant technologie et mysticisme dans un monde où les frontières entre réalité et légende s\'effacent.',
-  coverUrl: 'https://images.unsplash.com/photo-1551269901-5c5e14c25df7?w=800&h=1200&fit=crop',
-  genre: 'Sci-Fi',
-  tags: ['cyberpunk', 'magie', 'futur', 'action'],
-  views: 28500,
-  rating: 4.7,
-  chapters: [
-    { id: '1', number: 1, title: 'Chapitre 1: L\'Éveil', pages: 8, coverUrl: 'https://images.unsplash.com/photo-1551269901-5c5e14c25df7?w=400&h=600&fit=crop' },
-    { id: '2', number: 2, title: 'Chapitre 2: La Révélation', pages: 5, coverUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=600&fit=crop' },
-    { id: '3', number: 3, title: 'Chapitre 3: Le Combat Final', pages: 4, coverUrl: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&h=600&fit=crop' },
-  ],
-  status: 'En cours',
-  created_at: '2024-01-15',
-  updated_at: '2024-03-20'
+  description: bdData.description || '',
+  coverUrl: bdData.cover_url,
+  genre: bdData.genre,
+  tags: bdData.tags || [],
+  views: bdData.views || 0,
+  rating: 0,
+  chapters: (bdData.chapters || []).map((ch: any) => ({
+    id: ch.id,
+    number: ch.chapter_number,
+    title: ch.title,
+    pages: (ch.images || []).length,
+    coverUrl: (ch.images || [])[0] || bdData.cover_url
+  })).sort((a: any, b: any) => a.number - b.number),
+  status: bdData.status === 'published' ? 'Publié' : 'En cours',
+  created_at: bdData.created_at,
+  updated_at: bdData.updated_at
 };
 
 const formatViews = (num: number) => {
