@@ -1,0 +1,13 @@
+# Vercel redirects for Astro static build
+/stories/:slug /stories/:slug/index.html 200
+/stories/:slug/chapter/:number /stories/:slug/chapter/:number/index.html 200
+/comics/:id /comics/:id/index.html 200
+/admin /admin/index.html 200
+/admin/:path* /admin/:path*/index.html 200
+/catalogue /catalogue/index.html 200
+/leaderboard /leaderboard/index.html 200
+/login /login/index.html 200
+/register /register/index.html 200
+/profile /profile/index.html 200
+/write /write/index.html 200
+/* /index.html 200
