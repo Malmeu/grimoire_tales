@@ -30,8 +30,8 @@
   --glow-color: rgba(232, 192, 123, 0.3);
 }
 
-/* ===== THEME: ANIME MANGA (Lovecraftian Dark Gore) ===== */
-[data-theme="anime-manga"] {
+/* ===== THEME: ELDRITCH HORROR (Lovecraftian Dark Gore) ===== */
+[data-theme="eldritch-horror"] {
   --dark-void: #050505;
   --dark-purple: #0a0808;
   --parchment: #8a7a6a;
@@ -60,6 +60,130 @@
   --eldritch-grey: #1a1a1a;
   --tentacle-purple: #2d1b2d;
   --void-green: #0a1a0a;
+}
+
+/* ===== THEME: SPACE (Cosmos & Nebulae) ===== */
+[data-theme="space"] {
+  --dark-void: #0a0a1a;
+  --dark-purple: #0f0f2a;
+  --parchment: #a0b0d0;
+  --parchment-light: #e0e8ff;
+  --gold-old: #6366f1;
+  --gold-bright: #818cf8;
+  --blood-red: #ec4899;
+  --mystic-blue: #3b82f6;
+  
+  --bg-primary: #0a0a1a;
+  --bg-secondary: #0f0f2a;
+  --text-primary: #e0e8ff;
+  --text-secondary: #a0b0d0;
+  --accent-primary: #6366f1;
+  --accent-secondary: #818cf8;
+  --accent-danger: #ec4899;
+  
+  --font-title: 'Orbitron', sans-serif;
+  --card-bg: linear-gradient(145deg, rgba(99, 102, 241, 0.1) 0%, rgba(15, 15, 42, 0.9) 100%);
+  --card-border: rgba(99, 102, 241, 0.3);
+  --glow-color: rgba(99, 102, 241, 0.4);
+  
+  --nebula-pink: #ec4899;
+  --nebula-purple: #8b5cf6;
+  --nebula-blue: #3b82f6;
+  --star-white: #ffffff;
+  --cosmos-black: #050510;
+}
+
+/* ===== THEME: FAIRY (Féerique & Enchanted) ===== */
+[data-theme="fairy"] {
+  --dark-void: #1a0a1a;
+  --dark-purple: #2a1a2a;
+  --parchment: #e8d0e8;
+  --parchment-light: #fff0ff;
+  --gold-old: #d946ef;
+  --gold-bright: #f0abfc;
+  --blood-red: #be185d;
+  --mystic-blue: #7c3aed;
+  
+  --bg-primary: #1a0a1a;
+  --bg-secondary: #2a1a2a;
+  --text-primary: #fff0ff;
+  --text-secondary: #e8d0e8;
+  --accent-primary: #d946ef;
+  --accent-secondary: #f0abfc;
+  --accent-danger: #be185d;
+  
+  --font-title: 'Cinzel', serif;
+  --card-bg: linear-gradient(145deg, rgba(217, 70, 239, 0.1) 0%, rgba(42, 26, 42, 0.9) 100%);
+  --card-border: rgba(217, 70, 239, 0.3);
+  --glow-color: rgba(240, 171, 252, 0.4);
+  
+  --fairy-pink: #f472b6;
+  --fairy-purple: #d946ef;
+  --fairy-lavender: #c4b5fd;
+  --fairy-gold: #fcd34d;
+  --fairy-green: #4ade80;
+}
+
+/* ===== THEME: ETHEREAL (Éthéré & Mystique) ===== */
+[data-theme="ethereal"] {
+  --dark-void: #0a1015;
+  --dark-purple: #101820;
+  --parchment: #b0c4d8;
+  --parchment-light: #e8f4ff;
+  --gold-old: #67e8f9;
+  --gold-bright: #a5f3fc;
+  --blood-red: #0891b2;
+  --mystic-blue: #0ea5e9;
+  
+  --bg-primary: #0a1015;
+  --bg-secondary: #101820;
+  --text-primary: #e8f4ff;
+  --text-secondary: #b0c4d8;
+  --accent-primary: #67e8f9;
+  --accent-secondary: #a5f3fc;
+  --accent-danger: #0891b2;
+  
+  --font-title: 'Cinzel', serif;
+  --card-bg: linear-gradient(145deg, rgba(103, 232, 249, 0.08) 0%, rgba(16, 24, 32, 0.9) 100%);
+  --card-border: rgba(103, 232, 249, 0.25);
+  --glow-color: rgba(103, 232, 249, 0.3);
+  
+  --ether-cyan: #67e8f9;
+  --ether-blue: #38bdf8;
+  --ether-white: #f0f9ff;
+  --ether-silver: #cbd5e1;
+  --ether-mist: rgba(103, 232, 249, 0.1);
+}
+
+/* ===== THEME: WARRIOR (Guerrier & Battle) ===== */
+[data-theme="warrior"] {
+  --dark-void: #1a1410;
+  --dark-purple: #2a2018;
+  --parchment: #c4a882;
+  --parchment-light: #e8d4b8;
+  --gold-old: #f59e0b;
+  --gold-bright: #fbbf24;
+  --blood-red: #dc2626;
+  --mystic-blue: #78350f;
+  
+  --bg-primary: #1a1410;
+  --bg-secondary: #2a2018;
+  --text-primary: #e8d4b8;
+  --text-secondary: #c4a882;
+  --accent-primary: #f59e0b;
+  --accent-secondary: #fbbf24;
+  --accent-danger: #dc2626;
+  
+  --font-title: 'Cinzel', serif;
+  --card-bg: linear-gradient(145deg, rgba(245, 158, 11, 0.1) 0%, rgba(42, 32, 24, 0.9) 100%);
+  --card-border: rgba(245, 158, 11, 0.35);
+  --glow-color: rgba(245, 158, 11, 0.4);
+  
+  --steel-grey: #6b7280;
+  --bronze: #cd7f32;
+  --iron: #4a4a4a;
+  --fire-orange: #ea580c;
+  --battle-red: #dc2626;
 }
 
 * {
@@ -306,7 +430,7 @@ body {
 /* ===== LOVECRAFTIAN DARK GORE THEME STYLES ===== */
 
 /* Eldritch Background */
-[data-theme="anime-manga"] body {
+[data-theme="eldritch-horror"] body {
   background: 
     radial-gradient(ellipse at 50% 100%, rgba(139, 0, 0, 0.15) 0%, transparent 50%),
     linear-gradient(180deg, #050505 0%, #0a0808 30%, #050505 100%);
@@ -314,7 +438,7 @@ body {
 }
 
 /* Gothic Horror Titles */
-[data-theme="anime-manga"] .gothic-title {
+[data-theme="eldritch-horror"] .gothic-title {
   font-family: 'Cinzel', serif;
   color: var(--eldritch-red);
   text-shadow: 
@@ -325,7 +449,7 @@ body {
 }
 
 /* Blood-stained Cards */
-[data-theme="anime-manga"] .parchment-card {
+[data-theme="eldritch-horror"] .parchment-card {
   background: 
     linear-gradient(145deg, rgba(139, 0, 0, 0.1) 0%, rgba(5, 5, 5, 0.95) 100%);
   border: 1px solid rgba(139, 0, 0, 0.5);
@@ -334,12 +458,12 @@ body {
     inset 0 0 50px rgba(139, 0, 0, 0.05);
 }
 
-[data-theme="anime-manga"] .parchment-card::before {
+[data-theme="eldritch-horror"] .parchment-card::before {
   background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
 }
 
 /* Blood Button */
-[data-theme="anime-manga"] .glow-button {
+[data-theme="eldritch-horror"] .glow-button {
   background: linear-gradient(135deg, #8b0000 0%, #4a0000 100%);
   color: #c4b8a8;
   box-shadow: 
@@ -350,7 +474,7 @@ body {
   border: 1px solid rgba(139, 0, 0, 0.6);
 }
 
-[data-theme="anime-manga"] .glow-button:hover {
+[data-theme="eldritch-horror"] .glow-button:hover {
   box-shadow: 
     0 0 40px rgba(139, 0, 0, 0.8),
     0 0 60px rgba(102, 0, 0, 0.5),
@@ -360,7 +484,7 @@ body {
 }
 
 /* Void Glass */
-[data-theme="anime-manga"] .glass-dark {
+[data-theme="eldritch-horror"] .glass-dark {
   background: rgba(5, 5, 5, 0.95);
   border: 1px solid rgba(139, 0, 0, 0.3);
   box-shadow: 
@@ -369,7 +493,7 @@ body {
 }
 
 /* Eldritch Mist - Creeping Horror */
-[data-theme="anime-manga"] .mist-overlay {
+[data-theme="eldritch-horror"] .mist-overlay {
   background: 
     radial-gradient(ellipse at 10% 90%, rgba(139, 0, 0, 0.2) 0%, transparent 40%),
     radial-gradient(ellipse at 90% 10%, rgba(45, 27, 45, 0.3) 0%, transparent 40%),
@@ -397,26 +521,26 @@ body {
 }
 
 /* Blood Scrollbar */
-[data-theme="anime-manga"] ::-webkit-scrollbar-track {
+[data-theme="eldritch-horror"] ::-webkit-scrollbar-track {
   background: #050505;
 }
 
-[data-theme="anime-manga"] ::-webkit-scrollbar-thumb {
+[data-theme="eldritch-horror"] ::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #8b0000 0%, #4a0000 100%);
   border-radius: 4px;
 }
 
-[data-theme="anime-manga"] ::-webkit-scrollbar-thumb:hover {
+[data-theme="eldritch-horror"] ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, #a00000 0%, #660000 100%);
 }
 
 /* Horror Story Card */
-[data-theme="anime-manga"] .story-card {
+[data-theme="eldritch-horror"] .story-card {
   border: 1px solid rgba(139, 0, 0, 0.4);
   position: relative;
 }
 
-[data-theme="anime-manga"] .story-card::after {
+[data-theme="eldritch-horror"] .story-card::after {
   content: '';
   position: absolute;
   top: 0;
@@ -429,7 +553,7 @@ body {
   transition: opacity 0.4s ease;
 }
 
-[data-theme="anime-manga"] .story-card:hover {
+[data-theme="eldritch-horror"] .story-card:hover {
   transform: translateY(-8px) rotateX(2deg);
   box-shadow: 
     0 20px 60px rgba(0, 0, 0, 0.9),
@@ -438,31 +562,31 @@ body {
   border-color: var(--eldritch-red);
 }
 
-[data-theme="anime-manga"] .story-card:hover::after {
+[data-theme="eldritch-horror"] .story-card:hover::after {
   opacity: 1;
 }
 
 /* Ritual Loader */
-[data-theme="anime-manga"] .incantation-loader {
+[data-theme="eldritch-horror"] .incantation-loader {
   border-top-color: var(--eldritch-red);
 }
 
-[data-theme="anime-manga"] .incantation-loader::before {
+[data-theme="eldritch-horror"] .incantation-loader::before {
   border-top-color: var(--eldritch-crimson);
 }
 
 /* Blood Star Rating */
-[data-theme="anime-manga"] .star-rating .star {
+[data-theme="eldritch-horror"] .star-rating .star {
   color: rgba(139, 0, 0, 0.3);
 }
 
-[data-theme="anime-manga"] .star-rating .star.filled {
+[data-theme="eldritch-horror"] .star-rating .star.filled {
   color: var(--eldritch-red);
   filter: drop-shadow(0 0 3px var(--eldritch-red));
 }
 
 /* Floating Horror Animation */
-[data-theme="anime-manga"] .floating-shadow {
+[data-theme="eldritch-horror"] .floating-shadow {
   animation: horrorFloat 8s ease-in-out infinite;
 }
 
@@ -482,15 +606,15 @@ body {
 }
 
 /* Eldritch Markdown Content */
-[data-theme="anime-manga"] .markdown-content h1,
-[data-theme="anime-manga"] .markdown-content h2,
-[data-theme="anime-manga"] .markdown-content h3 {
+[data-theme="eldritch-horror"] .markdown-content h1,
+[data-theme="eldritch-horror"] .markdown-content h2,
+[data-theme="eldritch-horror"] .markdown-content h3 {
   font-family: 'Cinzel', serif;
   color: var(--eldritch-red);
   text-shadow: 0 0 15px rgba(139, 0, 0, 0.5);
 }
 
-[data-theme="anime-manga"] .markdown-content blockquote {
+[data-theme="eldritch-horror"] .markdown-content blockquote {
   border-left: 3px solid var(--eldritch-red);
   background: rgba(139, 0, 0, 0.08);
   padding: 1rem;
@@ -498,14 +622,14 @@ body {
   font-style: italic;
 }
 
-[data-theme="anime-manga"] .markdown-content code {
+[data-theme="eldritch-horror"] .markdown-content code {
   background: rgba(139, 0, 0, 0.1);
   border: 1px solid rgba(139, 0, 0, 0.3);
   color: #c4b8a8;
 }
 
 /* Madness Pulse Effect */
-[data-theme="anime-manga"] .pulse-horror {
+[data-theme="eldritch-horror"] .pulse-horror {
   animation: madnessPulse 3s ease-in-out infinite;
 }
 
@@ -521,11 +645,11 @@ body {
 }
 
 /* Tentacle Border Effect */
-[data-theme="anime-manga"] .tentacle-border {
+[data-theme="eldritch-horror"] .tentacle-border {
   position: relative;
 }
 
-[data-theme="anime-manga"] .tentacle-border::before {
+[data-theme="eldritch-horror"] .tentacle-border::before {
   content: '';
   position: absolute;
   top: -2px;
@@ -549,12 +673,12 @@ body {
 }
 
 /* Blood Drip Effect */
-[data-theme="anime-manga"] .blood-drip {
+[data-theme="eldritch-horror"] .blood-drip {
   position: relative;
   overflow: visible;
 }
 
-[data-theme="anime-manga"] .blood-drip::after {
+[data-theme="eldritch-horror"] .blood-drip::after {
   content: '';
   position: absolute;
   bottom: -10px;
@@ -569,4 +693,358 @@ body {
 @keyframes drip {
   0%, 100% { height: 15px; opacity: 0.8; }
   50% { height: 25px; opacity: 0.4; }
+}
+
+/* ===== SPACE THEME STYLES ===== */
+
+/* Cosmic Background */
+[data-theme="space"] body {
+  background: 
+    radial-gradient(ellipse at 20% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
+    radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+    linear-gradient(180deg, #0a0a1a 0%, #0f0f2a 50%, #0a0a1a 100%);
+}
+
+[data-theme="space"] .gothic-title {
+  font-family: 'Orbitron', sans-serif;
+  color: var(--nebula-purple);
+  text-shadow: 
+    0 0 10px var(--nebula-purple),
+    0 0 30px var(--nebula-blue),
+    0 0 50px rgba(139, 92, 246, 0.3);
+  letter-spacing: 4px;
+}
+
+[data-theme="space"] .parchment-card {
+  background: linear-gradient(145deg, rgba(99, 102, 241, 0.1) 0%, rgba(15, 15, 42, 0.95) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  box-shadow: 0 0 30px rgba(99, 102, 241, 0.15);
+}
+
+[data-theme="space"] .glow-button {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  box-shadow: 0 0 25px rgba(99, 102, 241, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+[data-theme="space"] .glow-button:hover {
+  box-shadow: 0 0 40px rgba(139, 92, 246, 0.7), 0 0 60px rgba(236, 72, 153, 0.3);
+  transform: translateY(-2px);
+}
+
+[data-theme="space"] .glass-dark {
+  background: rgba(10, 10, 26, 0.9);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+[data-theme="space"] .mist-overlay {
+  background: 
+    radial-gradient(circle at 30% 70%, rgba(139, 92, 246, 0.2) 0%, transparent 30%),
+    radial-gradient(circle at 70% 30%, rgba(236, 72, 153, 0.15) 0%, transparent 30%),
+    radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 40%);
+  animation: cosmicDrift 25s ease-in-out infinite;
+}
+
+@keyframes cosmicDrift {
+  0%, 100% { opacity: 0.6; transform: scale(1) rotate(0deg); }
+  50% { opacity: 0.8; transform: scale(1.1) rotate(5deg); }
+}
+
+[data-theme="space"] ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #6366f1 0%, #8b5cf6 100%);
+}
+
+[data-theme="space"] .story-card:hover {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(139, 92, 246, 0.4);
+  border-color: var(--nebula-purple);
+}
+
+/* Stars effect */
+[data-theme="space"]::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, white, transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 90px 40px, white, transparent),
+    radial-gradient(2px 2px at 160px 120px, rgba(255,255,255,0.9), transparent),
+    radial-gradient(1px 1px at 230px 80px, white, transparent);
+  background-size: 250px 200px;
+  animation: twinkle 5s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+}
+
+/* ===== FAIRY THEME STYLES ===== */
+
+/* Enchanted Background */
+[data-theme="fairy"] body {
+  background: 
+    radial-gradient(ellipse at 30% 80%, rgba(217, 70, 239, 0.15) 0%, transparent 40%),
+    radial-gradient(ellipse at 70% 20%, rgba(244, 114, 182, 0.12) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 50%, rgba(196, 181, 253, 0.08) 0%, transparent 50%),
+    linear-gradient(180deg, #1a0a1a 0%, #2a1a2a 50%, #1a0a1a 100%);
+}
+
+[data-theme="fairy"] .gothic-title {
+  font-family: 'Cinzel', serif;
+  color: var(--fairy-purple);
+  text-shadow: 
+    0 0 15px var(--fairy-pink),
+    0 0 30px var(--fairy-lavender),
+    0 0 45px rgba(217, 70, 239, 0.4);
+  letter-spacing: 2px;
+}
+
+[data-theme="fairy"] .parchment-card {
+  background: linear-gradient(145deg, rgba(217, 70, 239, 0.1) 0%, rgba(42, 26, 42, 0.95) 100%);
+  border: 1px solid rgba(217, 70, 239, 0.3);
+  box-shadow: 0 0 25px rgba(240, 171, 252, 0.15);
+}
+
+[data-theme="fairy"] .glow-button {
+  background: linear-gradient(135deg, #d946ef 0%, #f472b6 100%);
+  color: white;
+  box-shadow: 0 0 25px rgba(217, 70, 239, 0.5);
+}
+
+[data-theme="fairy"] .glow-button:hover {
+  box-shadow: 0 0 40px rgba(244, 114, 182, 0.6), 0 0 60px rgba(252, 211, 77, 0.3);
+  transform: translateY(-2px);
+}
+
+[data-theme="fairy"] .glass-dark {
+  background: rgba(26, 10, 26, 0.9);
+  border: 1px solid rgba(217, 70, 239, 0.2);
+}
+
+[data-theme="fairy"] .mist-overlay {
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(244, 114, 182, 0.2) 0%, transparent 30%),
+    radial-gradient(circle at 80% 20%, rgba(196, 181, 253, 0.15) 0%, transparent 30%),
+    radial-gradient(circle at 50% 60%, rgba(74, 222, 128, 0.08) 0%, transparent 40%);
+  animation: fairyDust 15s ease-in-out infinite;
+}
+
+@keyframes fairyDust {
+  0%, 100% { opacity: 0.5; transform: translateY(0) scale(1); }
+  50% { opacity: 0.8; transform: translateY(-10px) scale(1.05); }
+}
+
+[data-theme="fairy"] ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #d946ef 0%, #f472b6 100%);
+}
+
+[data-theme="fairy"] .story-card:hover {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(217, 70, 239, 0.4);
+  border-color: var(--fairy-purple);
+}
+
+/* Sparkle effect */
+[data-theme="fairy"] .parchment-card::after {
+  content: '✨';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 12px;
+  animation: sparkle 2s ease-in-out infinite;
+  opacity: 0.6;
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* ===== ETHEREAL THEME STYLES ===== */
+
+/* Mystical Background */
+[data-theme="ethereal"] body {
+  background: 
+    radial-gradient(ellipse at 50% 0%, rgba(103, 232, 249, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 0% 50%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+    radial-gradient(ellipse at 100% 50%, rgba(14, 165, 233, 0.08) 0%, transparent 40%),
+    linear-gradient(180deg, #0a1015 0%, #101820 50%, #0a1015 100%);
+}
+
+[data-theme="ethereal"] .gothic-title {
+  font-family: 'Cinzel', serif;
+  color: var(--ether-cyan);
+  text-shadow: 
+    0 0 15px var(--ether-cyan),
+    0 0 30px var(--ether-blue),
+    0 0 50px rgba(103, 232, 249, 0.3);
+  letter-spacing: 3px;
+}
+
+[data-theme="ethereal"] .parchment-card {
+  background: linear-gradient(145deg, rgba(103, 232, 249, 0.08) 0%, rgba(16, 24, 32, 0.95) 100%);
+  border: 1px solid rgba(103, 232, 249, 0.25);
+  box-shadow: 0 0 30px rgba(103, 232, 249, 0.1);
+}
+
+[data-theme="ethereal"] .glow-button {
+  background: linear-gradient(135deg, #67e8f9 0%, #38bdf8 100%);
+  color: #0a1015;
+  box-shadow: 0 0 25px rgba(103, 232, 249, 0.5);
+  font-weight: 600;
+}
+
+[data-theme="ethereal"] .glow-button:hover {
+  box-shadow: 0 0 40px rgba(103, 232, 249, 0.7), 0 0 60px rgba(56, 189, 248, 0.4);
+  transform: translateY(-2px);
+}
+
+[data-theme="ethereal"] .glass-dark {
+  background: rgba(10, 16, 21, 0.9);
+  border: 1px solid rgba(103, 232, 249, 0.15);
+}
+
+[data-theme="ethereal"] .mist-overlay {
+  background: 
+    radial-gradient(ellipse at 30% 70%, rgba(103, 232, 249, 0.15) 0%, transparent 40%),
+    radial-gradient(ellipse at 70% 30%, rgba(56, 189, 248, 0.1) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 50%, rgba(240, 249, 255, 0.05) 0%, transparent 50%);
+  animation: etherealFlow 20s ease-in-out infinite;
+}
+
+@keyframes etherealFlow {
+  0%, 100% { opacity: 0.4; transform: translateX(0) translateY(0); }
+  25% { opacity: 0.6; transform: translateX(15px) translateY(-10px); }
+  50% { opacity: 0.5; transform: translateX(-10px) translateY(15px); }
+  75% { opacity: 0.7; transform: translateX(-15px) translateY(-5px); }
+}
+
+[data-theme="ethereal"] ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #67e8f9 0%, #38bdf8 100%);
+}
+
+[data-theme="ethereal"] .story-card:hover {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(103, 232, 249, 0.3);
+  border-color: var(--ether-cyan);
+}
+
+/* Ethereal glow */
+[data-theme="ethereal"] .floating-shadow {
+  animation: etherealFloat 6s ease-in-out infinite;
+}
+
+@keyframes etherealFloat {
+  0%, 100% { 
+    transform: translateY(0);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(103, 232, 249, 0.2);
+  }
+  50% { 
+    transform: translateY(-12px);
+    box-shadow: 0 22px 50px rgba(0, 0, 0, 0.7), 0 0 35px rgba(103, 232, 249, 0.3);
+  }
+}
+
+/* ===== WARRIOR THEME STYLES ===== */
+
+/* Battle Background */
+[data-theme="warrior"] body {
+  background: 
+    radial-gradient(ellipse at 50% 100%, rgba(245, 158, 11, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 0% 0%, rgba(220, 38, 38, 0.08) 0%, transparent 40%),
+    linear-gradient(180deg, #1a1410 0%, #2a2018 50%, #1a1410 100%);
+}
+
+[data-theme="warrior"] .gothic-title {
+  font-family: 'Cinzel', serif;
+  color: var(--fire-orange);
+  text-shadow: 
+    0 0 10px var(--fire-orange),
+    0 0 25px rgba(245, 158, 11, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.8);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+[data-theme="warrior"] .parchment-card {
+  background: linear-gradient(145deg, rgba(245, 158, 11, 0.1) 0%, rgba(42, 32, 24, 0.95) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="warrior"] .glow-button {
+  background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+  color: #1a1410;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.5), 0 4px 10px rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+
+[data-theme="warrior"] .glow-button:hover {
+  box-shadow: 0 0 35px rgba(245, 158, 11, 0.7), 0 0 50px rgba(220, 38, 38, 0.3);
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+}
+
+[data-theme="warrior"] .glass-dark {
+  background: rgba(26, 20, 16, 0.95);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+[data-theme="warrior"] .mist-overlay {
+  background: 
+    radial-gradient(ellipse at 20% 90%, rgba(220, 38, 38, 0.15) 0%, transparent 40%),
+    radial-gradient(ellipse at 80% 10%, rgba(245, 158, 11, 0.1) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0.3) 0%, transparent 60%);
+  animation: battleSmoke 18s ease-in-out infinite;
+}
+
+@keyframes battleSmoke {
+  0%, 100% { opacity: 0.5; transform: translateX(0); }
+  50% { opacity: 0.7; transform: translateX(20px); }
+}
+
+[data-theme="warrior"] ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #f59e0b 0%, #ea580c 100%);
+}
+
+[data-theme="warrior"] .story-card {
+  border: 2px solid rgba(245, 158, 11, 0.3);
+}
+
+[data-theme="warrior"] .story-card:hover {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(245, 158, 11, 0.4);
+  border-color: var(--fire-orange);
+}
+
+/* Battle scar effect */
+[data-theme="warrior"] .parchment-card::before {
+  background: 
+    linear-gradient(45deg, transparent 48%, rgba(107, 114, 128, 0.1) 49%, rgba(107, 114, 128, 0.1) 51%, transparent 52%),
+    linear-gradient(-45deg, transparent 48%, rgba(107, 114, 128, 0.08) 49%, rgba(107, 114, 128, 0.08) 51%, transparent 52%);
+  background-size: 30px 30px;
+}
+
+[data-theme="warrior"] .floating-shadow {
+  animation: battleReady 5s ease-in-out infinite;
+}
+
+@keyframes battleReady {
+  0%, 100% { 
+    transform: translateY(0);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7), 0 0 15px rgba(245, 158, 11, 0.2);
+  }
+  50% { 
+    transform: translateY(-6px);
+    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.8), 0 0 25px rgba(220, 38, 38, 0.3);
+  }
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-type Theme = 'dark-fantasy' | 'anime-manga';
+type Theme = 'dark-fantasy' | 'eldritch-horror' | 'space' | 'fairy' | 'ethereal' | 'warrior';
 
 interface ThemeOption {
   id: Theme;
@@ -17,10 +17,34 @@ const themes: ThemeOption[] = [
     description: 'Parchemin & Magie Ancienne'
   },
   {
-    id: 'anime-manga',
+    id: 'eldritch-horror',
     name: 'Eldritch Horror',
     icon: '🩸',
     description: 'Gore & Lovecraftien'
+  },
+  {
+    id: 'space',
+    name: 'Cosmos',
+    icon: '🌌',
+    description: 'Espace & Nébuleuses'
+  },
+  {
+    id: 'fairy',
+    name: 'Féerique',
+    icon: '🧚',
+    description: 'Enchanté & Magique'
+  },
+  {
+    id: 'ethereal',
+    name: 'Éthéré',
+    icon: '💫',
+    description: 'Mystique & Céleste'
+  },
+  {
+    id: 'warrior',
+    name: 'Guerrier',
+    icon: '⚔️',
+    description: 'Combat & Bataille'
   }
 ];
 
@@ -30,7 +54,7 @@ export default function ThemeSwitcher() {
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('grimoire-theme') as Theme;
-    if (savedTheme && (savedTheme === 'dark-fantasy' || savedTheme === 'anime-manga')) {
+    if (savedTheme && themes.some(t => t.id === savedTheme)) {
       setCurrentTheme(savedTheme);
       document.documentElement.setAttribute('data-theme', savedTheme);
     }
