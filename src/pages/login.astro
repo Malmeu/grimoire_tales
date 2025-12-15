@@ -141,10 +141,10 @@ import Navbar from '../components/Navbar.astro';
       }
       
       if (data.user) {
-        // Succès - redirection vers la page d'accueil
+        // Succès - redirection vers le dashboard
         showSuccess('Connexion réussie ! Redirection...');
         setTimeout(() => {
-          window.location.href = '/';
+          window.location.href = '/dashboard';
         }, 1000);
       }
       

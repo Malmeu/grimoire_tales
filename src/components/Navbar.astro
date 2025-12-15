@@ -1,5 +1,6 @@
 ---
 import ThemeSwitcher from './ThemeSwitcher';
+import AuthButtons from './AuthButtons';
 
 const navLinks = [
   { href: '/', label: 'Accueil' },
@@ -55,12 +56,8 @@ const navLinks = [
         <!-- Theme Switcher -->
         <ThemeSwitcher client:load />
         
-        <a href="/login" class="hidden sm:inline text-parchment hover:text-gold-old transition-colors">
-          Connexion
-        </a>
-        <a href="/register" class="hidden sm:inline glow-button text-sm">
-          S'inscrire
-        </a>
+        <!-- Auth Buttons (dynamically shows login/register or user menu) -->
+        <AuthButtons client:load />
         
         <!-- Mobile Menu Button -->
         <button id="mobile-menu-btn" class="md:hidden p-2 text-parchment-light hover:text-gold-old">
