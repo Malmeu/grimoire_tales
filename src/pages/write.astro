@@ -135,9 +135,16 @@ import Editor from '../components/Editor';
 </BaseLayout>
 
 <script>
+  import { createClient } from '@supabase/supabase-js';
+  
+  const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+  const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
   // Cover upload handling
   const dropzone = document.getElementById('cover-dropzone');
   const coverInput = document.getElementById('cover-input') as HTMLInputElement;
+  let coverDataUrl: string | null = null;
   
   dropzone?.addEventListener('click', () => coverInput?.click());
   
@@ -165,19 +172,121 @@ import Editor from '../components/Editor';
     if (!file.type.startsWith('image/')) return;
     const reader = new FileReader();
     reader.onload = (e) => {
+      coverDataUrl = e.target?.result as string;
       if (dropzone) {
-        dropzone.innerHTML = `<img src="${e.target?.result}" alt="Cover preview" class="max-h-48 mx-auto rounded-lg" />`;
+        dropzone.innerHTML = `<img src="${coverDataUrl}" alt="Cover preview" class="max-h-48 mx-auto rounded-lg" />`;
       }
     };
     reader.readAsDataURL(file);
   }
 
+  // Generate slug from title
+  function generateSlug(title: string): string {
+    return title
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+      .substring(0, 100);
+  }
+
   // Form submission
   const form = document.getElementById('story-form');
-  form?.addEventListener('submit', (e) => {
+  const submitBtn = form?.querySelector('button[type="submit"]') as HTMLButtonElement;
+  
+  form?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    // TODO: Intégrer Supabase
-    console.log('Story submitted');
-    alert('Histoire publiée avec succès !');
+    
+    // Vérifier l'authentification
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      alert('Vous devez être connecté pour publier une histoire.');
+      window.location.href = '/login';
+      return;
+    }
+    
+    // Récupérer les valeurs du formulaire
+    const title = (document.getElementById('title') as HTMLInputElement).value.trim();
+    const type = (document.getElementById('type') as HTMLSelectElement).value;
+    const genre = (document.getElementById('genre') as HTMLSelectElement).value;
+    const description = (document.getElementById('description') as HTMLTextAreaElement).value.trim();
+    const tagsInput = (document.getElementById('tags') as HTMLInputElement).value;
+    const chapterTitle = (document.getElementById('chapter-title') as HTMLInputElement).value.trim();
+    const editorTextarea = document.getElementById('editor-textarea') as HTMLTextAreaElement;
+    const content = editorTextarea?.value.trim() || '';
+    
+    // Validation
+    if (!title || !description || !content) {
+      alert('Veuillez remplir tous les champs obligatoires (titre, description, contenu).');
+      return;
+    }
+    
+    // Désactiver le bouton pendant la soumission
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Publication en cours...';
+    }
+    
+    try {
+      const slug = generateSlug(title);
+      const tags = tagsInput.split(',').map(t => t.trim()).filter(Boolean);
+      
+      // Créer l'histoire
+      const { data: story, error: storyError } = await supabase
+        .from('stories')
+        .insert({
+          title,
+          slug,
+          description,
+          type,
+          genre,
+          tags,
+          author_id: user.id,
+          cover_url: coverDataUrl || null,
+          status: 'published'
+        })
+        .select()
+        .single();
+      
+      if (storyError) {
+        console.error('Erreur création histoire:', storyError);
+        throw new Error(storyError.message);
+      }
+      
+      // Créer le premier chapitre
+      const { error: chapterError } = await supabase
+        .from('chapters')
+        .insert({
+          story_id: story.id,
+          title: chapterTitle || 'Chapitre 1',
+          chapter_number: 1,
+          content: content,
+          word_count: content.split(/\s+/).filter(Boolean).length
+        });
+      
+      if (chapterError) {
+        console.error('Erreur création chapitre:', chapterError);
+        throw new Error(chapterError.message);
+      }
+      
+      alert('Histoire publiée avec succès !');
+      
+      // Rediriger vers la page de l'histoire
+      if (type === 'comic') {
+        window.location.href = `/bd/${story.id}`;
+      } else {
+        window.location.href = `/stories/${slug}`;
+      }
+      
+    } catch (error: any) {
+      console.error('Erreur:', error);
+      alert('Erreur lors de la publication: ' + (error.message || 'Erreur inconnue'));
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Publier l\'histoire';
+      }
+    }
   });
 </script>
