@@ -1,0 +1,1 @@
+import"./hoisted.BkoFJ0Lt.js";const t=document.getElementById("chapter-select");t&&t.addEventListener("change",e=>{const a=e.target.value,c=window.location.pathname.split("/")[2];window.location.href=`/bd/${c}/chapter/${a}`});

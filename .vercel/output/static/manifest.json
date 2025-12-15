@@ -1,0 +1,16 @@
+{
+  "name": "Grimoire Tales",
+  "short_name": "Grimoire",
+  "description": "Plateforme communautaire pour auteurs de novels, livres et BD - Culture Geek & Dark Fantasy",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a0d1e",
+  "theme_color": "#1a0d1e",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

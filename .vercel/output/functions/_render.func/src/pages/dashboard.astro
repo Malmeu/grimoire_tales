@@ -1,0 +1,305 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout title="Dashboard - Grimoire Tales">
+  <Navbar />
+  
+  <main class="pt-24 pb-20 px-4 min-h-screen">
+    <div class="max-w-6xl mx-auto">
+      <!-- Loading State -->
+      <div id="loading-state" class="text-center py-20">
+        <div class="w-12 h-12 border-4 border-[var(--accent-primary)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <p class="text-[var(--text-secondary)]">Chargement de votre dashboard...</p>
+      </div>
+
+      <!-- Not Logged In State -->
+      <div id="not-logged-state" class="hidden text-center py-20">
+        <div class="text-6xl mb-4">🔐</div>
+        <h1 class="gothic-title text-3xl mb-4">Connexion requise</h1>
+        <p class="text-[var(--text-secondary)] mb-8">Vous devez être connecté pour accéder à votre dashboard.</p>
+        <div class="flex justify-center gap-4">
+          <a href="/login" class="glow-button px-8 py-3">Se connecter</a>
+          <a href="/register" class="px-8 py-3 border border-[var(--accent-primary)]/50 text-[var(--accent-primary)] rounded hover:bg-[var(--accent-primary)]/10 transition-colors">
+            S'inscrire
+          </a>
+        </div>
+      </div>
+
+      <!-- Dashboard Content -->
+      <div id="dashboard-content" class="hidden">
+        <!-- Welcome Header -->
+        <section class="parchment-card rounded-2xl p-8 mb-8">
+          <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div class="flex items-center gap-6">
+              <div id="user-avatar" class="w-20 h-20 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center text-4xl text-[var(--accent-primary)] font-semibold shadow-lg">
+                ?
+              </div>
+              <div>
+                <p class="text-[var(--text-secondary)] text-sm mb-1">Bienvenue,</p>
+                <h1 id="user-name" class="gothic-title text-3xl">Utilisateur</h1>
+                <p id="user-email" class="text-[var(--text-secondary)] text-sm"></p>
+              </div>
+            </div>
+            
+            <div class="flex flex-wrap gap-3">
+              <a href="/write" class="glow-button px-6 py-2 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                Nouvelle histoire
+              </a>
+              <a href="/profile" class="px-6 py-2 border border-[var(--accent-primary)]/50 text-[var(--accent-primary)] rounded hover:bg-[var(--accent-primary)]/10 transition-colors">
+                Mon profil
+              </a>
+              <button id="logout-btn" class="px-6 py-2 border border-red-500/50 text-red-400 rounded hover:bg-red-500/10 transition-colors">
+                Déconnexion
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Quick Stats -->
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div class="parchment-card p-6 rounded-xl text-center">
+            <div class="text-3xl mb-2">📚</div>
+            <div id="stat-stories" class="text-2xl font-semibold text-[var(--accent-primary)]">0</div>
+            <div class="text-sm text-[var(--text-secondary)]">Mes histoires</div>
+          </div>
+          <div class="parchment-card p-6 rounded-xl text-center">
+            <div class="text-3xl mb-2">👁️</div>
+            <div id="stat-views" class="text-2xl font-semibold text-[var(--accent-primary)]">0</div>
+            <div class="text-sm text-[var(--text-secondary)]">Vues totales</div>
+          </div>
+          <div class="parchment-card p-6 rounded-xl text-center">
+            <div class="text-3xl mb-2">❤️</div>
+            <div id="stat-likes" class="text-2xl font-semibold text-[var(--accent-primary)]">0</div>
+            <div class="text-sm text-[var(--text-secondary)]">Likes reçus</div>
+          </div>
+          <div class="parchment-card p-6 rounded-xl text-center">
+            <div class="text-3xl mb-2">💬</div>
+            <div id="stat-comments" class="text-2xl font-semibold text-[var(--accent-primary)]">0</div>
+            <div class="text-sm text-[var(--text-secondary)]">Commentaires</div>
+          </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <a href="/write" class="parchment-card p-6 rounded-xl hover:border-[var(--accent-primary)]/50 transition-all group">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-lg bg-[var(--accent-primary)]/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                ✍️
+              </div>
+              <div>
+                <h3 class="text-[var(--text-primary)] font-semibold group-hover:text-[var(--accent-primary)] transition-colors">Écrire</h3>
+                <p class="text-[var(--text-secondary)] text-sm">Créer une nouvelle histoire</p>
+              </div>
+            </div>
+          </a>
+          
+          <a href="/catalogue" class="parchment-card p-6 rounded-xl hover:border-[var(--accent-primary)]/50 transition-all group">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-lg bg-[var(--accent-primary)]/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                📖
+              </div>
+              <div>
+                <h3 class="text-[var(--text-primary)] font-semibold group-hover:text-[var(--accent-primary)] transition-colors">Explorer</h3>
+                <p class="text-[var(--text-secondary)] text-sm">Découvrir des histoires</p>
+              </div>
+            </div>
+          </a>
+          
+          <a href="/leaderboard" class="parchment-card p-6 rounded-xl hover:border-[var(--accent-primary)]/50 transition-all group">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-lg bg-[var(--accent-primary)]/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                🏆
+              </div>
+              <div>
+                <h3 class="text-[var(--text-primary)] font-semibold group-hover:text-[var(--accent-primary)] transition-colors">Classement</h3>
+                <p class="text-[var(--text-secondary)] text-sm">Voir les meilleurs auteurs</p>
+              </div>
+            </div>
+          </a>
+        </section>
+
+        <!-- My Stories -->
+        <section class="parchment-card rounded-xl p-6 mb-8">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="gothic-title text-xl">Mes histoires</h2>
+            <a href="/write" class="text-[var(--accent-primary)] hover:text-[var(--accent-secondary)] transition-colors text-sm flex items-center gap-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+              </svg>
+              Nouvelle
+            </a>
+          </div>
+          
+          <div id="my-stories-list" class="space-y-4">
+            <!-- Stories will be loaded here -->
+            <div class="text-center py-8 text-[var(--text-secondary)]">
+              <div class="text-4xl mb-2">📝</div>
+              <p>Vous n'avez pas encore publié d'histoire.</p>
+              <a href="/write" class="inline-block mt-4 text-[var(--accent-primary)] hover:text-[var(--accent-secondary)]">
+                Commencer à écrire →
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <!-- Recent Activity -->
+        <section class="parchment-card rounded-xl p-6">
+          <h2 class="gothic-title text-xl mb-6">Activité récente</h2>
+          
+          <div id="activity-list" class="space-y-4">
+            <div class="text-center py-8 text-[var(--text-secondary)]">
+              <div class="text-4xl mb-2">📊</div>
+              <p>Aucune activité récente.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+  
+  <Footer />
+</BaseLayout>
+
+<script>
+  import { createClient } from '@supabase/supabase-js';
+  
+  const supabaseUrl = 'https://ooevpxkcftpemofjantd.supabase.co';
+  const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9vZXZweGtjZnRwZW1vZmphbnRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU3Njg3ODYsImV4cCI6MjA4MTM0NDc4Nn0.rbUanSpOKtwqcSs71eCLw_K2ywpuWSfG9Ae88hBmu6M';
+  
+  const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+  const loadingState = document.getElementById('loading-state');
+  const notLoggedState = document.getElementById('not-logged-state');
+  const dashboardContent = document.getElementById('dashboard-content');
+  const userAvatar = document.getElementById('user-avatar');
+  const userName = document.getElementById('user-name');
+  const userEmail = document.getElementById('user-email');
+  const logoutBtn = document.getElementById('logout-btn');
+
+  async function checkAuth() {
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      
+      if (error || !user) {
+        showNotLoggedState();
+        return;
+      }
+      
+      // User is logged in
+      showDashboard(user);
+      loadUserData(user);
+      
+    } catch (err) {
+      console.error('Auth error:', err);
+      showNotLoggedState();
+    }
+  }
+
+  function showNotLoggedState() {
+    loadingState?.classList.add('hidden');
+    notLoggedState?.classList.remove('hidden');
+    dashboardContent?.classList.add('hidden');
+  }
+
+  function showDashboard(user: any) {
+    loadingState?.classList.add('hidden');
+    notLoggedState?.classList.add('hidden');
+    dashboardContent?.classList.remove('hidden');
+    
+    // Update user info
+    const username = user.user_metadata?.username || user.email?.split('@')[0] || 'Utilisateur';
+    if (userAvatar) userAvatar.textContent = username.charAt(0).toUpperCase();
+    if (userName) userName.textContent = username;
+    if (userEmail) userEmail.textContent = user.email || '';
+  }
+
+  async function loadUserData(user: any) {
+    try {
+      // Load user's stories
+      const { data: stories, error } = await supabase
+        .from('stories')
+        .select('*')
+        .eq('author_id', user.id)
+        .order('created_at', { ascending: false });
+      
+      if (stories && stories.length > 0) {
+        const storiesList = document.getElementById('my-stories-list');
+        if (storiesList) {
+          storiesList.innerHTML = stories.map(story => `
+            <a href="/stories/${story.slug}" class="flex items-center justify-between p-4 bg-[var(--bg-secondary)] rounded-lg hover:bg-[var(--accent-primary)]/5 transition-colors group">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-16 rounded overflow-hidden bg-[var(--bg-primary)]">
+                  ${story.cover_url ? `<img src="${story.cover_url}" alt="${story.title}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-2xl">📖</div>'}
+                </div>
+                <div>
+                  <h3 class="text-[var(--text-primary)] font-medium group-hover:text-[var(--accent-primary)] transition-colors">${story.title}</h3>
+                  <div class="flex items-center gap-3 text-sm text-[var(--text-secondary)]">
+                    <span class="px-2 py-0.5 bg-[var(--bg-primary)] rounded text-xs">${story.type}</span>
+                    <span>${story.status === 'published' ? '✅ Publié' : '📝 Brouillon'}</span>
+                    <span>👁️ ${story.views || 0}</span>
+                  </div>
+                </div>
+              </div>
+              <svg class="w-5 h-5 text-[var(--text-secondary)] group-hover:text-[var(--accent-primary)] group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </a>
+          `).join('');
+          
+          // Update stats
+          const totalViews = stories.reduce((acc, s) => acc + (s.views || 0), 0);
+          const statStories = document.getElementById('stat-stories');
+          const statViews = document.getElementById('stat-views');
+          if (statStories) statStories.textContent = stories.length.toString();
+          if (statViews) statViews.textContent = formatNumber(totalViews);
+        }
+      }
+      
+      // Load likes count
+      const { count: likesCount } = await supabase
+        .from('likes')
+        .select('*', { count: 'exact', head: true })
+        .in('story_id', (stories || []).map(s => s.id));
+      
+      const statLikes = document.getElementById('stat-likes');
+      if (statLikes) statLikes.textContent = (likesCount || 0).toString();
+      
+      // Load comments count
+      const { count: commentsCount } = await supabase
+        .from('comments')
+        .select('*', { count: 'exact', head: true })
+        .in('story_id', (stories || []).map(s => s.id));
+      
+      const statComments = document.getElementById('stat-comments');
+      if (statComments) statComments.textContent = (commentsCount || 0).toString();
+      
+    } catch (err) {
+      console.error('Error loading user data:', err);
+    }
+  }
+
+  function formatNumber(num: number): string {
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+    return num.toString();
+  }
+
+  // Logout handler
+  logoutBtn?.addEventListener('click', async () => {
+    try {
+      await supabase.auth.signOut();
+      window.location.href = '/';
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
+  });
+
+  // Check auth on load
+  checkAuth();
+</script>

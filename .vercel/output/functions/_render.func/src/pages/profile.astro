@@ -1,0 +1,366 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout title="Mon Profil">
+  <Navbar />
+  
+  <main class="pt-24 pb-20 px-4 min-h-screen">
+    <div class="max-w-6xl mx-auto">
+      <!-- Loading State -->
+      <div id="loading-state" class="text-center py-20">
+        <div class="w-12 h-12 border-4 border-gold-old border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <p class="text-parchment/70">Chargement du profil...</p>
+      </div>
+
+      <!-- Not Logged In State -->
+      <div id="not-logged-state" class="hidden text-center py-20">
+        <div class="text-6xl mb-4">🔐</div>
+        <h1 class="gothic-title text-3xl mb-4">Connexion requise</h1>
+        <p class="text-parchment/70 mb-8">Vous devez être connecté pour voir votre profil.</p>
+        <div class="flex justify-center gap-4">
+          <a href="/login" class="glow-button px-8 py-3">Se connecter</a>
+          <a href="/register" class="px-8 py-3 border border-gold-old/50 text-gold-old rounded hover:bg-gold-old/10 transition-colors">
+            S'inscrire
+          </a>
+        </div>
+      </div>
+
+      <!-- Profile Content -->
+      <div id="profile-content" class="hidden">
+        <!-- Profile Header -->
+        <section class="parchment-card rounded-2xl p-8 mb-8">
+          <div class="flex flex-col md:flex-row items-start gap-8">
+            <!-- Avatar -->
+            <div class="flex-shrink-0">
+              <div id="user-avatar" class="w-32 h-32 rounded-full bg-dark-purple flex items-center justify-center text-5xl text-gold-old font-gothic shadow-glow">
+                ?
+              </div>
+            </div>
+            
+            <!-- Info -->
+            <div class="flex-1">
+              <div class="flex flex-wrap items-center gap-4 mb-4">
+                <h1 id="user-name" class="gothic-title text-3xl">Utilisateur</h1>
+                <div id="user-badges" class="flex flex-wrap gap-2"></div>
+              </div>
+              
+              <p id="user-bio" class="text-parchment/80 mb-6 max-w-2xl">Aucune bio définie.</p>
+              
+              <div class="flex flex-wrap gap-6 mb-6">
+                <div class="text-center">
+                  <div id="stat-followers" class="text-2xl font-gothic text-gold-old">0</div>
+                  <div class="text-sm text-parchment/60">Abonnés</div>
+                </div>
+                <div class="text-center">
+                  <div id="stat-following" class="text-2xl font-gothic text-gold-old">0</div>
+                  <div class="text-sm text-parchment/60">Abonnements</div>
+                </div>
+                <div class="text-center">
+                  <div id="stat-stories-count" class="text-2xl font-gothic text-gold-old">0</div>
+                  <div class="text-sm text-parchment/60">Histoires</div>
+                </div>
+              </div>
+              
+              <div class="flex gap-4">
+                <button id="edit-profile-btn" class="glow-button px-6 py-2">
+                  Modifier le profil
+                </button>
+                <a href="/write" class="px-6 py-2 border border-gold-old/50 text-gold-old rounded hover:bg-gold-old/10 transition-colors">
+                  Nouvelle histoire
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Edit Profile Modal -->
+        <div id="edit-modal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+          <div class="parchment-card rounded-2xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="gothic-title text-2xl">Modifier le profil</h2>
+              <button id="close-modal-btn" class="text-parchment/50 hover:text-parchment transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+            
+            <form id="edit-profile-form" class="space-y-4">
+              <div>
+                <label for="edit-username" class="block text-sm text-parchment mb-2">Nom d'utilisateur</label>
+                <input
+                  type="text"
+                  id="edit-username"
+                  class="w-full px-4 py-3 bg-dark-void/50 border border-gold-old/20 rounded-lg text-parchment-light focus:outline-none focus:border-gold-old/50 transition-colors"
+                />
+              </div>
+              
+              <div>
+                <label for="edit-bio" class="block text-sm text-parchment mb-2">Bio</label>
+                <textarea
+                  id="edit-bio"
+                  rows="4"
+                  class="w-full px-4 py-3 bg-dark-void/50 border border-gold-old/20 rounded-lg text-parchment-light resize-none focus:outline-none focus:border-gold-old/50 transition-colors"
+                  placeholder="Parlez de vous, vos passions geek..."
+                ></textarea>
+              </div>
+              
+              <div class="flex gap-4 pt-4">
+                <button type="submit" class="glow-button px-6 py-2 flex-1">
+                  Enregistrer
+                </button>
+                <button type="button" id="cancel-edit-btn" class="px-6 py-2 border border-gold-old/50 text-gold-old rounded hover:bg-gold-old/10 transition-colors">
+                  Annuler
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div class="parchment-card p-6 rounded-xl text-center">
+            <div id="stat-views" class="text-3xl font-gothic text-gold-old mb-1">0</div>
+            <div class="text-sm text-parchment/60">Vues totales</div>
+          </div>
+          <div class="parchment-card p-6 rounded-xl text-center">
+            <div id="stat-likes" class="text-3xl font-gothic text-gold-old mb-1">0</div>
+            <div class="text-sm text-parchment/60">Likes</div>
+          </div>
+          <div class="parchment-card p-6 rounded-xl text-center">
+            <div id="stat-comments" class="text-3xl font-gothic text-gold-old mb-1">0</div>
+            <div class="text-sm text-parchment/60">Commentaires</div>
+          </div>
+          <div class="parchment-card p-6 rounded-xl text-center">
+            <div id="stat-publications" class="text-3xl font-gothic text-gold-old mb-1">0</div>
+            <div class="text-sm text-parchment/60">Publications</div>
+          </div>
+        </section>
+
+        <!-- User Stories -->
+        <section>
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="gothic-title text-2xl">Mes Histoires</h2>
+            <a href="/write" class="text-gold-old hover:text-gold-bright transition-colors flex items-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+              </svg>
+              Nouvelle histoire
+            </a>
+          </div>
+          
+          <div id="stories-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="text-center py-8 text-parchment/70 col-span-full">
+              <div class="text-4xl mb-2">📝</div>
+              <p>Vous n'avez pas encore publié d'histoire.</p>
+              <a href="/write" class="inline-block mt-4 text-gold-old hover:text-gold-bright">
+                Commencer à écrire →
+              </a>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+  
+  <Footer />
+</BaseLayout>
+
+<script>
+  import { createClient } from '@supabase/supabase-js';
+  
+  const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+  const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  const loadingState = document.getElementById('loading-state');
+  const notLoggedState = document.getElementById('not-logged-state');
+  const profileContent = document.getElementById('profile-content');
+  
+  let currentUser: any = null;
+  let userProfile: any = null;
+
+  async function init() {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      loadingState?.classList.add('hidden');
+      notLoggedState?.classList.remove('hidden');
+      return;
+    }
+    
+    currentUser = user;
+    await loadProfile();
+  }
+
+  async function loadProfile() {
+    try {
+      // Get user profile from public.users
+      const { data: profile } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', currentUser.id)
+        .single();
+      
+      userProfile = profile;
+      
+      // Get user's stories
+      const { data: stories } = await supabase
+        .from('stories')
+        .select('*')
+        .eq('author_id', currentUser.id)
+        .order('created_at', { ascending: false });
+      
+      // Get followers count
+      const { count: followersCount } = await supabase
+        .from('follows')
+        .select('*', { count: 'exact', head: true })
+        .eq('following_id', currentUser.id);
+      
+      // Get following count
+      const { count: followingCount } = await supabase
+        .from('follows')
+        .select('*', { count: 'exact', head: true })
+        .eq('follower_id', currentUser.id);
+      
+      // Calculate stats
+      const totalViews = (stories || []).reduce((acc, s) => acc + (s.views || 0), 0);
+      
+      // Get likes count
+      const storyIds = (stories || []).map(s => s.id);
+      const { count: likesCount } = storyIds.length > 0 
+        ? await supabase.from('likes').select('*', { count: 'exact', head: true }).in('story_id', storyIds)
+        : { count: 0 };
+      
+      // Get comments count
+      const { count: commentsCount } = storyIds.length > 0
+        ? await supabase.from('comments').select('*', { count: 'exact', head: true }).in('story_id', storyIds)
+        : { count: 0 };
+      
+      // Update UI
+      const username = profile?.username || currentUser.email?.split('@')[0] || 'Utilisateur';
+      
+      const userAvatar = document.getElementById('user-avatar');
+      const userName = document.getElementById('user-name');
+      const userBio = document.getElementById('user-bio');
+      const userBadges = document.getElementById('user-badges');
+      
+      if (userAvatar) userAvatar.textContent = username.charAt(0).toUpperCase();
+      if (userName) userName.textContent = username;
+      if (userBio) userBio.textContent = profile?.bio_geek || 'Aucune bio définie. Cliquez sur "Modifier le profil" pour en ajouter une.';
+      
+      // Badges
+      if (userBadges && profile?.badges && profile.badges.length > 0) {
+        userBadges.innerHTML = profile.badges.map((badge: string) => 
+          `<span class="px-3 py-1 bg-gold-old/20 text-gold-old text-sm rounded-full">${badge}</span>`
+        ).join('');
+      }
+      
+      // Stats
+      const formatNumber = (num: number) => {
+        if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+        if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+        return num.toString();
+      };
+      
+      document.getElementById('stat-followers')!.textContent = formatNumber(followersCount || 0);
+      document.getElementById('stat-following')!.textContent = formatNumber(followingCount || 0);
+      document.getElementById('stat-stories-count')!.textContent = (stories?.length || 0).toString();
+      document.getElementById('stat-views')!.textContent = formatNumber(totalViews);
+      document.getElementById('stat-likes')!.textContent = formatNumber(likesCount || 0);
+      document.getElementById('stat-comments')!.textContent = formatNumber(commentsCount || 0);
+      document.getElementById('stat-publications')!.textContent = (stories?.length || 0).toString();
+      
+      // Stories grid
+      const storiesGrid = document.getElementById('stories-grid');
+      if (storiesGrid && stories && stories.length > 0) {
+        storiesGrid.innerHTML = stories.map(story => `
+          <a href="/stories/${story.slug}" class="parchment-card rounded-lg overflow-hidden group hover:border-gold-old/50 transition-all">
+            <div class="aspect-[3/4] bg-dark-purple overflow-hidden">
+              ${story.cover_url 
+                ? `<img src="${story.cover_url}" alt="${story.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">`
+                : `<div class="w-full h-full flex items-center justify-center text-6xl">📖</div>`
+              }
+            </div>
+            <div class="p-4">
+              <span class="px-2 py-1 bg-gold-old/20 text-gold-old text-xs rounded mb-2 inline-block">${story.type}</span>
+              <h3 class="text-parchment-light font-medium group-hover:text-gold-old transition-colors line-clamp-2">${story.title}</h3>
+              <div class="flex items-center gap-3 mt-2 text-sm text-parchment/60">
+                <span>👁️ ${formatNumber(story.views || 0)}</span>
+                <span>${story.status === 'published' ? '✅' : '📝'}</span>
+              </div>
+            </div>
+          </a>
+        `).join('');
+      }
+      
+      // Show profile
+      loadingState?.classList.add('hidden');
+      profileContent?.classList.remove('hidden');
+      
+    } catch (err) {
+      console.error('Error loading profile:', err);
+      loadingState?.classList.add('hidden');
+      notLoggedState?.classList.remove('hidden');
+    }
+  }
+
+  // Edit profile modal
+  const editBtn = document.getElementById('edit-profile-btn');
+  const editModal = document.getElementById('edit-modal');
+  const closeModalBtn = document.getElementById('close-modal-btn');
+  const cancelEditBtn = document.getElementById('cancel-edit-btn');
+  const editForm = document.getElementById('edit-profile-form') as HTMLFormElement;
+  const editUsername = document.getElementById('edit-username') as HTMLInputElement;
+  const editBio = document.getElementById('edit-bio') as HTMLTextAreaElement;
+
+  editBtn?.addEventListener('click', () => {
+    editUsername.value = userProfile?.username || '';
+    editBio.value = userProfile?.bio_geek || '';
+    editModal?.classList.remove('hidden');
+  });
+
+  closeModalBtn?.addEventListener('click', () => editModal?.classList.add('hidden'));
+  cancelEditBtn?.addEventListener('click', () => editModal?.classList.add('hidden'));
+
+  editForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const newUsername = editUsername.value.trim();
+    const newBio = editBio.value.trim();
+    
+    if (!newUsername) {
+      alert('Le nom d\'utilisateur est requis.');
+      return;
+    }
+    
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({
+          username: newUsername,
+          bio_geek: newBio
+        })
+        .eq('id', currentUser.id);
+      
+      if (error) {
+        console.error('Error updating profile:', error);
+        alert('Erreur lors de la mise à jour: ' + error.message);
+        return;
+      }
+      
+      alert('Profil mis à jour avec succès !');
+      editModal?.classList.add('hidden');
+      await loadProfile();
+      
+    } catch (err) {
+      console.error('Error:', err);
+      alert('Erreur lors de la mise à jour du profil.');
+    }
+  });
+
+  init();
+</script>

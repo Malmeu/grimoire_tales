@@ -1,0 +1,530 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/Navbar.astro';
+import Editor from '../components/Editor';
+---
+
+<BaseLayout title="Écrire une histoire">
+  <Navbar />
+  
+  <main class="pt-24 pb-20 px-4">
+    <div class="max-w-4xl mx-auto">
+      <div class="mb-8">
+        <h1 class="gothic-title text-3xl md:text-4xl mb-2">Nouvelle Histoire</h1>
+        <p class="text-parchment/70">Donnez vie à votre imagination</p>
+      </div>
+
+      <form id="story-form" class="space-y-6">
+        <!-- Title -->
+        <div>
+          <label for="title" class="block text-sm text-parchment mb-2">Titre de l'histoire *</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            required
+            class="w-full px-4 py-3 bg-dark-void/50 border border-gold-old/20 rounded-lg text-parchment-light placeholder-parchment/40 focus:outline-none focus:border-gold-old/50 transition-colors text-xl font-gothic"
+            placeholder="Le titre de votre chef-d'œuvre..."
+          />
+        </div>
+
+        <!-- Type & Genre -->
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label for="type" class="block text-sm text-parchment mb-2">Type *</label>
+            <select
+              id="type"
+              name="type"
+              required
+              class="w-full px-4 py-3 bg-dark-void/50 border border-gold-old/20 rounded-lg text-parchment-light focus:outline-none focus:border-gold-old/50 transition-colors"
+            >
+              <option value="novel">Novel (texte + illustrations)</option>
+              <option value="book">Livre complet</option>
+              <option value="comic">BD / Manga (planches)</option>
+            </select>
+          </div>
+          <div>
+            <label for="genre" class="block text-sm text-parchment mb-2">Genre *</label>
+            <select
+              id="genre"
+              name="genre"
+              required
+              class="w-full px-4 py-3 bg-dark-void/50 border border-gold-old/20 rounded-lg text-parchment-light focus:outline-none focus:border-gold-old/50 transition-colors"
+            >
+              <option value="dark-fantasy">Dark Fantasy</option>
+              <option value="fantasy">Fantasy</option>
+              <option value="sci-fi">Sci-Fi</option>
+              <option value="anime">Anime</option>
+              <option value="gaming">Gaming</option>
+              <option value="horreur">Horreur</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label for="description" class="block text-sm text-parchment mb-2">Description *</label>
+          <textarea
+            id="description"
+            name="description"
+            required
+            rows="3"
+            class="w-full px-4 py-3 bg-dark-void/50 border border-gold-old/20 rounded-lg text-parchment-light placeholder-parchment/40 focus:outline-none focus:border-gold-old/50 transition-colors resize-none"
+            placeholder="Un résumé captivant de votre histoire..."
+          ></textarea>
+        </div>
+
+        <!-- Tags -->
+        <div>
+          <label for="tags" class="block text-sm text-parchment mb-2">Tags (séparés par des virgules)</label>
+          <input
+            type="text"
+            id="tags"
+            name="tags"
+            class="w-full px-4 py-3 bg-dark-void/50 border border-gold-old/20 rounded-lg text-parchment-light placeholder-parchment/40 focus:outline-none focus:border-gold-old/50 transition-colors"
+            placeholder="magie, dragons, aventure..."
+          />
+        </div>
+
+        <!-- Cover Upload -->
+        <div>
+          <label class="block text-sm text-parchment mb-2">Image de couverture *</label>
+          <div class="parchment-card p-8 rounded-lg border-2 border-dashed border-gold-old/30 text-center hover:border-gold-old/50 transition-colors cursor-pointer" id="cover-dropzone">
+            <svg class="w-12 h-12 mx-auto mb-4 text-parchment/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <p class="text-parchment/70 mb-2">Glissez une image ou cliquez pour sélectionner</p>
+            <p class="text-sm text-parchment/50">PNG, JPG jusqu'à 5MB • Ratio recommandé: 3:4</p>
+            <input type="file" id="cover-input" accept="image/*" class="hidden" />
+          </div>
+          <p id="cover-status" class="text-sm text-parchment/50 mt-2 hidden"></p>
+        </div>
+
+        <!-- Chapter Title -->
+        <div id="chapter-section">
+          <label for="chapter-title" class="block text-sm text-parchment mb-2">Titre du premier chapitre</label>
+          <input
+            type="text"
+            id="chapter-title"
+            name="chapter-title"
+            class="w-full px-4 py-3 bg-dark-void/50 border border-gold-old/20 rounded-lg text-parchment-light placeholder-parchment/40 focus:outline-none focus:border-gold-old/50 transition-colors"
+            placeholder="Prologue, Chapitre 1..."
+          />
+        </div>
+
+        <!-- NOVEL/BOOK Editor Section -->
+        <div id="novel-editor-section">
+          <label class="block text-sm text-parchment mb-2">Contenu du chapitre *</label>
+          <Editor client:load placeholder="Commencez à écrire votre histoire... Utilisez Markdown pour le formatage." />
+          
+          <!-- Illustrations for Novel -->
+          <div class="mt-4">
+            <label class="block text-sm text-parchment mb-2">Illustrations (optionnel)</label>
+            <div class="parchment-card p-6 rounded-lg border-2 border-dashed border-gold-old/30 text-center hover:border-gold-old/50 transition-colors cursor-pointer" id="illustrations-dropzone">
+              <svg class="w-10 h-10 mx-auto mb-3 text-parchment/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              <p class="text-parchment/70 text-sm mb-1">Ajoutez des illustrations pour votre chapitre</p>
+              <p class="text-xs text-parchment/50">PNG, JPG • Plusieurs fichiers acceptés</p>
+              <input type="file" id="illustrations-input" accept="image/*" multiple class="hidden" />
+            </div>
+            <div id="illustrations-preview" class="grid grid-cols-4 gap-2 mt-3"></div>
+          </div>
+        </div>
+
+        <!-- COMIC/BD Editor Section -->
+        <div id="comic-editor-section" class="hidden">
+          <label class="block text-sm text-parchment mb-2">Planches du chapitre *</label>
+          <p class="text-parchment/60 text-sm mb-4">Uploadez les planches de votre BD/Manga dans l'ordre de lecture.</p>
+          
+          <div class="parchment-card p-8 rounded-lg border-2 border-dashed border-gold-old/30 text-center hover:border-gold-old/50 transition-colors cursor-pointer" id="pages-dropzone">
+            <svg class="w-12 h-12 mx-auto mb-4 text-parchment/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+            </svg>
+            <p class="text-parchment/70 mb-2">Glissez vos planches ou cliquez pour sélectionner</p>
+            <p class="text-sm text-parchment/50">PNG, JPG • Plusieurs fichiers acceptés • Glissez pour réorganiser</p>
+            <input type="file" id="pages-input" accept="image/*" multiple class="hidden" />
+          </div>
+          
+          <div id="pages-preview" class="grid grid-cols-3 md:grid-cols-4 gap-3 mt-4"></div>
+          <p id="pages-count" class="text-sm text-parchment/50 mt-2 hidden"></p>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex flex-wrap gap-4 pt-4">
+          <button type="submit" class="glow-button px-8 py-3 text-lg">
+            Publier l'histoire
+          </button>
+          <button type="button" id="draft-btn" class="px-8 py-3 border border-gold-old/50 text-gold-old rounded hover:bg-gold-old/10 transition-colors">
+            Sauvegarder en brouillon
+          </button>
+        </div>
+        
+        <p id="upload-progress" class="text-sm text-gold-old hidden"></p>
+      </form>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  import { createClient } from '@supabase/supabase-js';
+  
+  const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+  const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  // State
+  let coverFile: File | null = null;
+  let illustrationFiles: File[] = [];
+  let comicPageFiles: File[] = [];
+  let currentUser: any = null;
+
+  // DOM Elements
+  const form = document.getElementById('story-form');
+  const submitBtn = form?.querySelector('button[type="submit"]') as HTMLButtonElement;
+  const typeSelect = document.getElementById('type') as HTMLSelectElement;
+  const novelEditorSection = document.getElementById('novel-editor-section');
+  const comicEditorSection = document.getElementById('comic-editor-section');
+  const uploadProgress = document.getElementById('upload-progress');
+
+  // Check auth on load
+  async function checkAuth() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      alert('Vous devez être connecté pour écrire une histoire.');
+      window.location.href = '/login';
+      return;
+    }
+    currentUser = user;
+  }
+  checkAuth();
+
+  // Toggle editor based on type
+  typeSelect?.addEventListener('change', () => {
+    const isComic = typeSelect.value === 'comic';
+    if (novelEditorSection) novelEditorSection.classList.toggle('hidden', isComic);
+    if (comicEditorSection) comicEditorSection.classList.toggle('hidden', !isComic);
+  });
+
+  // ============================================
+  // COVER IMAGE HANDLING
+  // ============================================
+  const coverDropzone = document.getElementById('cover-dropzone');
+  const coverInput = document.getElementById('cover-input') as HTMLInputElement;
+  const coverStatus = document.getElementById('cover-status');
+
+  function setupDropzone(dropzone: HTMLElement | null, input: HTMLInputElement | null, onFiles: (files: File[]) => void) {
+    if (!dropzone || !input) return;
+    
+    dropzone.addEventListener('click', () => input.click());
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.classList.add('border-gold-old');
+    });
+    dropzone.addEventListener('dragleave', () => {
+      dropzone.classList.remove('border-gold-old');
+    });
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('border-gold-old');
+      const files = (e as DragEvent).dataTransfer?.files;
+      if (files) onFiles(Array.from(files));
+    });
+    input.addEventListener('change', () => {
+      if (input.files) onFiles(Array.from(input.files));
+    });
+  }
+
+  setupDropzone(coverDropzone, coverInput, (files) => {
+    if (files[0] && files[0].type.startsWith('image/')) {
+      coverFile = files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (coverDropzone) {
+          coverDropzone.innerHTML = `
+            <img src="${e.target?.result}" alt="Cover preview" class="max-h-48 mx-auto rounded-lg" />
+            <p class="text-sm text-gold-old mt-2">✓ ${coverFile!.name}</p>
+          `;
+        }
+      };
+      reader.readAsDataURL(files[0]);
+    }
+  });
+
+  // ============================================
+  // ILLUSTRATIONS HANDLING (for novels)
+  // ============================================
+  const illustrationsDropzone = document.getElementById('illustrations-dropzone');
+  const illustrationsInput = document.getElementById('illustrations-input') as HTMLInputElement;
+  const illustrationsPreview = document.getElementById('illustrations-preview');
+
+  setupDropzone(illustrationsDropzone, illustrationsInput, (files) => {
+    const imageFiles = files.filter(f => f.type.startsWith('image/'));
+    illustrationFiles = [...illustrationFiles, ...imageFiles];
+    updateIllustrationsPreview();
+  });
+
+  function updateIllustrationsPreview() {
+    if (!illustrationsPreview) return;
+    illustrationsPreview.innerHTML = illustrationFiles.map((file, idx) => {
+      const url = URL.createObjectURL(file);
+      return `
+        <div class="relative group">
+          <img src="${url}" alt="Illustration ${idx + 1}" class="w-full h-24 object-cover rounded" />
+          <button type="button" data-idx="${idx}" class="remove-illustration absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full text-xs opacity-0 group-hover:opacity-100 transition-opacity">×</button>
+        </div>
+      `;
+    }).join('');
+    
+    illustrationsPreview.querySelectorAll('.remove-illustration').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt((e.target as HTMLElement).dataset.idx || '0');
+        illustrationFiles.splice(idx, 1);
+        updateIllustrationsPreview();
+      });
+    });
+  }
+
+  // ============================================
+  // COMIC PAGES HANDLING
+  // ============================================
+  const pagesDropzone = document.getElementById('pages-dropzone');
+  const pagesInput = document.getElementById('pages-input') as HTMLInputElement;
+  const pagesPreview = document.getElementById('pages-preview');
+  const pagesCount = document.getElementById('pages-count');
+
+  setupDropzone(pagesDropzone, pagesInput, (files) => {
+    const imageFiles = files.filter(f => f.type.startsWith('image/'));
+    comicPageFiles = [...comicPageFiles, ...imageFiles];
+    updatePagesPreview();
+  });
+
+  function updatePagesPreview() {
+    if (!pagesPreview) return;
+    pagesPreview.innerHTML = comicPageFiles.map((file, idx) => {
+      const url = URL.createObjectURL(file);
+      return `
+        <div class="relative group parchment-card p-2 rounded">
+          <img src="${url}" alt="Page ${idx + 1}" class="w-full aspect-[3/4] object-cover rounded" />
+          <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">Page ${idx + 1}</div>
+          <button type="button" data-idx="${idx}" class="remove-page absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full text-sm opacity-0 group-hover:opacity-100 transition-opacity">×</button>
+        </div>
+      `;
+    }).join('');
+    
+    if (pagesCount) {
+      pagesCount.classList.remove('hidden');
+      pagesCount.textContent = `${comicPageFiles.length} planche(s) ajoutée(s)`;
+    }
+    
+    pagesPreview.querySelectorAll('.remove-page').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt((e.target as HTMLElement).dataset.idx || '0');
+        comicPageFiles.splice(idx, 1);
+        updatePagesPreview();
+      });
+    });
+  }
+
+  // ============================================
+  // UPLOAD TO SUPABASE STORAGE
+  // ============================================
+  async function uploadImage(file: File, path: string): Promise<string | null> {
+    const { data, error } = await supabase.storage
+      .from('images')
+      .upload(path, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+    
+    if (error) {
+      console.error('Upload error:', error);
+      return null;
+    }
+    
+    const { data: { publicUrl } } = supabase.storage
+      .from('images')
+      .getPublicUrl(data.path);
+    
+    return publicUrl;
+  }
+
+  function showProgress(message: string) {
+    if (uploadProgress) {
+      uploadProgress.classList.remove('hidden');
+      uploadProgress.textContent = message;
+    }
+  }
+
+  // Generate slug from title
+  function generateSlug(title: string): string {
+    const baseSlug = title
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+      .substring(0, 80);
+    
+    // Add random suffix to ensure uniqueness
+    const randomSuffix = Math.random().toString(36).substring(2, 8);
+    return `${baseSlug}-${randomSuffix}`;
+  }
+
+  // ============================================
+  // FORM SUBMISSION
+  // ============================================
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    if (!currentUser) {
+      alert('Vous devez être connecté pour publier une histoire.');
+      window.location.href = '/login';
+      return;
+    }
+    
+    const title = (document.getElementById('title') as HTMLInputElement).value.trim();
+    const type = typeSelect.value;
+    const genre = (document.getElementById('genre') as HTMLSelectElement).value;
+    const description = (document.getElementById('description') as HTMLTextAreaElement).value.trim();
+    const tagsInput = (document.getElementById('tags') as HTMLInputElement).value;
+    const chapterTitle = (document.getElementById('chapter-title') as HTMLInputElement).value.trim();
+    const editorTextarea = document.getElementById('editor-textarea') as HTMLTextAreaElement;
+    const content = editorTextarea?.value.trim() || '';
+    
+    // Validation
+    if (!title || !description) {
+      alert('Veuillez remplir le titre et la description.');
+      return;
+    }
+    
+    if (type === 'comic' && comicPageFiles.length === 0) {
+      alert('Veuillez ajouter au moins une planche pour votre BD.');
+      return;
+    }
+    
+    if (type !== 'comic' && !content) {
+      alert('Veuillez écrire le contenu de votre chapitre.');
+      return;
+    }
+    
+    // Disable button
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Publication en cours...';
+    }
+    
+    try {
+      const slug = generateSlug(title);
+      const tags = tagsInput.split(',').map(t => t.trim()).filter(Boolean);
+      const timestamp = Date.now();
+      
+      // Upload cover image
+      showProgress('Upload de la couverture...');
+      let coverUrl: string | null = null;
+      if (coverFile) {
+        const coverPath = `${currentUser.id}/covers/${timestamp}-${coverFile.name}`;
+        coverUrl = await uploadImage(coverFile, coverPath);
+      }
+      
+      // Create story
+      showProgress('Création de l\'histoire...');
+      const { data: story, error: storyError } = await supabase
+        .from('stories')
+        .insert({
+          title,
+          slug,
+          description,
+          type,
+          genre,
+          tags,
+          author_id: currentUser.id,
+          cover_url: coverUrl,
+          status: 'published'
+        })
+        .select()
+        .single();
+      
+      if (storyError) {
+        throw new Error(storyError.message);
+      }
+      
+      // Handle based on type
+      if (type === 'comic') {
+        // Upload comic pages
+        showProgress('Upload des planches (0/' + comicPageFiles.length + ')...');
+        const pageUrls: string[] = [];
+        
+        for (let i = 0; i < comicPageFiles.length; i++) {
+          showProgress(`Upload des planches (${i + 1}/${comicPageFiles.length})...`);
+          const file = comicPageFiles[i];
+          const pagePath = `${currentUser.id}/stories/${story.id}/pages/${timestamp}-${i + 1}-${file.name}`;
+          const url = await uploadImage(file, pagePath);
+          if (url) pageUrls.push(url);
+        }
+        
+        // Create chapter with images
+        const { error: chapterError } = await supabase
+          .from('chapters')
+          .insert({
+            story_id: story.id,
+            title: chapterTitle || 'Chapitre 1',
+            chapter_number: 1,
+            content: '',
+            images: pageUrls,
+            word_count: 0
+          });
+        
+        if (chapterError) throw new Error(chapterError.message);
+        
+      } else {
+        // Upload illustrations for novel
+        let illustrationUrls: string[] = [];
+        if (illustrationFiles.length > 0) {
+          showProgress('Upload des illustrations...');
+          for (let i = 0; i < illustrationFiles.length; i++) {
+            const file = illustrationFiles[i];
+            const illustPath = `${currentUser.id}/stories/${story.id}/illustrations/${timestamp}-${i + 1}-${file.name}`;
+            const url = await uploadImage(file, illustPath);
+            if (url) illustrationUrls.push(url);
+          }
+        }
+        
+        // Create chapter with content and illustrations
+        showProgress('Création du chapitre...');
+        const { error: chapterError } = await supabase
+          .from('chapters')
+          .insert({
+            story_id: story.id,
+            title: chapterTitle || 'Chapitre 1',
+            chapter_number: 1,
+            content: content,
+            images: illustrationUrls,
+            word_count: content.split(/\s+/).filter(Boolean).length
+          });
+        
+        if (chapterError) throw new Error(chapterError.message);
+      }
+      
+      showProgress('Publication réussie !');
+      alert('Histoire publiée avec succès !');
+      
+      // Redirect
+      if (type === 'comic') {
+        window.location.href = `/bd/${story.id}`;
+      } else {
+        window.location.href = `/stories/${slug}`;
+      }
+      
+    } catch (error: any) {
+      console.error('Erreur:', error);
+      alert('Erreur lors de la publication: ' + (error.message || 'Erreur inconnue'));
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Publier l\'histoire';
+      }
+      if (uploadProgress) uploadProgress.classList.add('hidden');
+    }
+  });
+</script>
