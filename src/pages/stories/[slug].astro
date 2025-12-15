@@ -4,7 +4,14 @@ import Navbar from '../../components/Navbar.astro';
 import Footer from '../../components/Footer.astro';
 import CommentFeed from '../../components/CommentFeed';
 
-export const prerender = false;
+// Générer des pages statiques pour les stories
+export async function getStaticPaths() {
+  return [
+    { params: { slug: 'chroniques-crepuscule-eternel' } },
+    { params: { slug: 'ombre-du-neant' } },
+    { params: { slug: 'la-derniere-lueur' } }
+  ];
+}
 
 const { slug } = Astro.params;
 

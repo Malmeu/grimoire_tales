@@ -2,7 +2,23 @@
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import Navbar from '../../../../components/Navbar.astro';
 
-export const prerender = false;
+// Générer des pages statiques pour les chapitres
+export async function getStaticPaths() {
+  const stories = [
+    'chroniques-crepuscule-eternel',
+    'ombre-du-neant', 
+    'la-derniere-lueur'
+  ];
+  
+  const paths = [];
+  for (const slug of stories) {
+    for (let i = 1; i <= 5; i++) {
+      paths.push({ params: { slug, number: i.toString() } });
+    }
+  }
+  
+  return paths;
+}
 
 const { slug, number } = Astro.params;
 const chapterNumber = parseInt(number || '1');

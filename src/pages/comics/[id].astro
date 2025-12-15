@@ -5,7 +5,14 @@ import Footer from '../../components/Footer.astro';
 import ComicViewer from '../../components/ComicViewer';
 import CommentFeed from '../../components/CommentFeed';
 
-export const prerender = false;
+// Générer des pages statiques pour les comics
+export async function getStaticPaths() {
+  return [
+    { params: { id: '1' } },
+    { params: { id: '2' } },
+    { params: { id: '3' } }
+  ];
+}
 
 const { id } = Astro.params;
 

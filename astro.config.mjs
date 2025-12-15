@@ -7,7 +7,7 @@ export default defineConfig({
     react(),
     tailwind()
   ],
-  output: 'hybrid',
+  output: 'static',
   vite: {
     ssr: {
       noExternal: ['gsap']

@@ -1,0 +1,1 @@
+import"./hoisted.BkoFJ0Lt.js";const s=document.getElementById("register-form");s?.addEventListener("submit",async e=>{e.preventDefault();const t=document.getElementById("password").value,o=document.getElementById("confirm-password").value;if(t!==o){alert("Les mots de passe ne correspondent pas");return}console.log("Register submitted"),window.location.href="/login"});
