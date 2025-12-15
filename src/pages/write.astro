@@ -358,13 +358,17 @@ import Editor from '../components/Editor';
 
   // Generate slug from title
   function generateSlug(title: string): string {
-    return title
+    const baseSlug = title
       .toLowerCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '')
-      .substring(0, 100);
+      .substring(0, 80);
+    
+    // Add random suffix to ensure uniqueness
+    const randomSuffix = Math.random().toString(36).substring(2, 8);
+    return `${baseSlug}-${randomSuffix}`;
   }
 
   // ============================================
