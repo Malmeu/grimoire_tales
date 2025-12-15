@@ -1,0 +1,171 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Navbar from '../../../components/Navbar.astro';
+import BDReader from '../../../components/BDReader';
+
+export async function getStaticPaths() {
+  return [
+    { params: { id: '1' } },
+    { params: { id: '2' } },
+    { params: { id: '3' } }
+  ];
+}
+
+const { id } = Astro.params;
+
+// Simulation de données - à remplacer par Supabase
+const bd = {
+  id: id,
+  title: 'Le Dernier Gardien',
+  author: {
+    username: 'ShadowArtist',
+    avatar_url: null
+  },
+  description: 'Dans un futur cyberpunk, le dernier gardien de l\'ancienne magie doit protéger les secrets du passé.',
+  genre: 'Sci-Fi',
+  chapters: [
+    {
+      id: '1',
+      number: 1,
+      title: 'Chapitre 1: L\'Éveil',
+      pages: [
+        'https://images.unsplash.com/photo-1551269901-5c5e14c25df7?w=800&h=1200&fit=crop',
+        'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&h=1200&fit=crop',
+        'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&h=1200&fit=crop',
+        'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&h=1200&fit=crop',
+        'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&h=1200&fit=crop',
+        'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=1200&fit=crop',
+        'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&h=1200&fit=crop',
+        'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=1200&fit=crop',
+      ]
+    },
+    {
+      id: '2',
+      number: 2,
+      title: 'Chapitre 2: La Révélation',
+      pages: [
+        'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=1200&fit=crop',
+        'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&h=1200&fit=crop',
+        'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=1200&fit=crop',
+        'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&h=1200&fit=crop',
+        'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&h=1200&fit=crop',
+      ]
+    },
+    {
+      id: '3',
+      number: 3,
+      title: 'Chapitre 3: Le Combat Final',
+      pages: [
+        'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&h=1200&fit=crop',
+        'https://images.unsplash.com/photo-1551269901-5c5e14c25df7?w=800&h=1200&fit=crop',
+        'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&h=1200&fit=crop',
+        'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=1200&fit=crop',
+      ]
+    }
+  ],
+  totalChapters: 3
+};
+
+// Par défaut, on affiche le premier chapitre
+const currentChapter = bd.chapters[0];
+---
+
+<BaseLayout title={`${bd.title} - Lecture`} description={bd.description}>
+  <Navbar />
+  
+  <main class="pt-20 pb-8 min-h-screen">
+    <!-- BD Info Header -->
+    <section class="max-w-6xl mx-auto px-4 py-6">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
+        <div>
+          <div class="flex items-center gap-3 mb-2">
+            <a href={`/bd/${id}`} class="text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
+            </a>
+            <span class="px-3 py-1 bg-[var(--accent-primary)]/20 text-[var(--accent-primary)] text-sm rounded-full">BD</span>
+            <span class="px-3 py-1 bg-[var(--bg-secondary)] text-[var(--text-secondary)] text-sm rounded-full">{bd.genre}</span>
+          </div>
+          
+          <h1 class="gothic-title text-2xl md:text-3xl">{bd.title}</h1>
+          
+          <div class="flex items-center gap-3 mt-2 text-sm">
+            <span class="text-[var(--text-secondary)]">par</span>
+            <a href={`/authors/${bd.author.username}`} class="text-[var(--accent-primary)] hover:text-[var(--accent-secondary)] transition-colors">
+              {bd.author.username}
+            </a>
+          </div>
+        </div>
+        
+        <!-- Chapter Selector -->
+        <div class="flex items-center gap-3">
+          <label class="text-[var(--text-secondary)] text-sm">Chapitre:</label>
+          <select 
+            id="chapter-select"
+            class="px-4 py-2 bg-[var(--bg-secondary)] border border-[var(--card-border)] rounded-lg text-[var(--text-primary)] focus:border-[var(--accent-primary)] focus:outline-none"
+          >
+            {bd.chapters.map((chapter) => (
+              <option value={chapter.number} selected={chapter.number === 1}>
+                {chapter.title}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- BD Reader -->
+    <section class="max-w-7xl mx-auto px-2 md:px-4">
+      <BDReader 
+        client:load 
+        pages={currentChapter.pages} 
+        title={bd.title}
+        chapterTitle={currentChapter.title}
+        hasNextChapter={currentChapter.number < bd.totalChapters}
+        hasPrevChapter={currentChapter.number > 1}
+      />
+    </section>
+
+    <!-- Chapter List -->
+    <section class="max-w-6xl mx-auto px-4 py-8 mt-8">
+      <h2 class="gothic-title text-xl mb-4">Tous les chapitres</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {bd.chapters.map((chapter) => (
+          <a 
+            href={`/bd/${id}/chapter/${chapter.number}`}
+            class={`p-4 parchment-card rounded-lg hover:border-[var(--accent-primary)]/50 transition-all group ${chapter.number === 1 ? 'border-[var(--accent-primary)]' : ''}`}
+          >
+            <div class="flex items-center gap-4">
+              <div class="w-16 h-20 rounded overflow-hidden flex-shrink-0">
+                <img 
+                  src={chapter.pages[0]} 
+                  alt={chapter.title}
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                />
+              </div>
+              <div>
+                <span class="text-[var(--accent-primary)] text-sm">Chapitre {chapter.number}</span>
+                <h3 class="text-[var(--text-primary)] font-medium">{chapter.title}</h3>
+                <p class="text-[var(--text-secondary)] text-sm">{chapter.pages.length} pages</p>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  const chapterSelect = document.getElementById('chapter-select') as HTMLSelectElement;
+  if (chapterSelect) {
+    chapterSelect.addEventListener('change', (e) => {
+      const target = e.target as HTMLSelectElement;
+      const chapterNum = target.value;
+      const bdId = window.location.pathname.split('/')[2];
+      window.location.href = `/bd/${bdId}/chapter/${chapterNum}`;
+    });
+  }
+</script>

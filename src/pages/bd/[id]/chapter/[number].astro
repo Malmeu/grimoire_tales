@@ -1,0 +1,191 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Navbar from '../../../../components/Navbar.astro';
+import BDReader from '../../../../components/BDReader';
+
+export async function getStaticPaths() {
+  const bds = ['1', '2', '3'];
+  const paths = [];
+  
+  for (const id of bds) {
+    for (let i = 1; i <= 3; i++) {
+      paths.push({ params: { id, number: i.toString() } });
+    }
+  }
+  
+  return paths;
+}
+
+const { id, number } = Astro.params;
+const chapterNumber = parseInt(number || '1');
+
+// Simulation de données - à remplacer par Supabase
+const bd = {
+  id: id,
+  title: 'Le Dernier Gardien',
+  author: {
+    username: 'ShadowArtist',
+    avatar_url: null
+  },
+  description: 'Dans un futur cyberpunk, le dernier gardien de l\'ancienne magie doit protéger les secrets du passé.',
+  genre: 'Sci-Fi',
+  totalChapters: 3
+};
+
+const chaptersData: Record<number, { title: string; pages: string[] }> = {
+  1: {
+    title: 'Chapitre 1: L\'Éveil',
+    pages: [
+      'https://images.unsplash.com/photo-1551269901-5c5e14c25df7?w=800&h=1200&fit=crop',
+      'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&h=1200&fit=crop',
+      'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&h=1200&fit=crop',
+      'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&h=1200&fit=crop',
+      'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&h=1200&fit=crop',
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=1200&fit=crop',
+      'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&h=1200&fit=crop',
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=1200&fit=crop',
+    ]
+  },
+  2: {
+    title: 'Chapitre 2: La Révélation',
+    pages: [
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=1200&fit=crop',
+      'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&h=1200&fit=crop',
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=1200&fit=crop',
+      'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&h=1200&fit=crop',
+      'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&h=1200&fit=crop',
+    ]
+  },
+  3: {
+    title: 'Chapitre 3: Le Combat Final',
+    pages: [
+      'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&h=1200&fit=crop',
+      'https://images.unsplash.com/photo-1551269901-5c5e14c25df7?w=800&h=1200&fit=crop',
+      'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&h=1200&fit=crop',
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=1200&fit=crop',
+    ]
+  }
+};
+
+const currentChapter = chaptersData[chapterNumber] || chaptersData[1];
+const hasNextChapter = chapterNumber < bd.totalChapters;
+const hasPrevChapter = chapterNumber > 1;
+---
+
+<BaseLayout title={`${currentChapter.title} - ${bd.title}`} description={bd.description}>
+  <Navbar />
+  
+  <main class="pt-20 pb-8 min-h-screen">
+    <!-- Header with navigation -->
+    <div class="fixed top-16 left-0 right-0 z-40 glass-dark border-b border-[var(--card-border)]">
+      <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <a href={`/bd/${id}`} class="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            <span class="hidden sm:inline">{bd.title}</span>
+          </a>
+        </div>
+        
+        <div class="flex items-center gap-2">
+          <span class="text-[var(--accent-primary)] text-sm font-medium">{currentChapter.title}</span>
+          <span class="text-[var(--text-secondary)] text-sm">
+            ({chapterNumber}/{bd.totalChapters})
+          </span>
+        </div>
+        
+        <div class="flex items-center gap-2">
+          {hasPrevChapter && (
+            <a 
+              href={`/bd/${id}/chapter/${chapterNumber - 1}`}
+              class="p-2 text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors"
+              title="Chapitre précédent"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
+            </a>
+          )}
+          {hasNextChapter && (
+            <a 
+              href={`/bd/${id}/chapter/${chapterNumber + 1}`}
+              class="p-2 text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors"
+              title="Chapitre suivant"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+
+    <!-- BD Reader -->
+    <section class="max-w-7xl mx-auto px-2 md:px-4 pt-16">
+      <BDReader 
+        client:load 
+        pages={currentChapter.pages} 
+        title={bd.title}
+        chapterTitle={currentChapter.title}
+        hasNextChapter={hasNextChapter}
+        hasPrevChapter={hasPrevChapter}
+      />
+    </section>
+
+    <!-- Chapter Navigation Footer -->
+    <nav class="max-w-6xl mx-auto px-4 mt-8 pt-8 border-t border-[var(--card-border)]">
+      <div class="flex items-center justify-between">
+        {hasPrevChapter ? (
+          <a 
+            href={`/bd/${id}/chapter/${chapterNumber - 1}`}
+            class="flex items-center gap-2 px-6 py-3 parchment-card rounded-lg hover:border-[var(--accent-primary)]/50 transition-colors"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            <div class="text-left">
+              <span class="text-[var(--text-secondary)] text-xs block">Précédent</span>
+              <span class="text-[var(--text-primary)]">Chapitre {chapterNumber - 1}</span>
+            </div>
+          </a>
+        ) : (
+          <div></div>
+        )}
+        
+        <a 
+          href={`/bd/${id}`}
+          class="px-4 py-2 text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors"
+        >
+          📚 Tous les chapitres
+        </a>
+        
+        {hasNextChapter ? (
+          <a 
+            href={`/bd/${id}/chapter/${chapterNumber + 1}`}
+            class="flex items-center gap-2 px-6 py-3 glow-button"
+          >
+            <div class="text-right">
+              <span class="text-xs block opacity-80">Suivant</span>
+              <span>Chapitre {chapterNumber + 1}</span>
+            </div>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </a>
+        ) : (
+          <a 
+            href={`/bd/${id}`}
+            class="flex items-center gap-2 px-6 py-3 glow-button"
+          >
+            <span>Fin de la BD</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+          </a>
+        )}
+      </div>
+    </nav>
+  </main>
+</BaseLayout>
