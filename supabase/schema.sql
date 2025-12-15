@@ -261,3 +261,34 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- ============================================
+-- STORAGE BUCKETS
+-- À exécuter dans l'éditeur SQL de Supabase
+-- ============================================
+
+-- Créer le bucket pour les images
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('images', 'images', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- Politique pour permettre à tout le monde de voir les images
+CREATE POLICY "Images are publicly accessible"
+ON storage.objects FOR SELECT
+USING (bucket_id = 'images');
+
+-- Politique pour permettre aux utilisateurs authentifiés d'uploader des images
+CREATE POLICY "Authenticated users can upload images"
+ON storage.objects FOR INSERT
+WITH CHECK (
+  bucket_id = 'images' 
+  AND auth.role() = 'authenticated'
+);
+
+-- Politique pour permettre aux utilisateurs de supprimer leurs propres images
+CREATE POLICY "Users can delete own images"
+ON storage.objects FOR DELETE
+USING (
+  bucket_id = 'images' 
+  AND auth.uid()::text = (storage.foldername(name))[1]
+);
