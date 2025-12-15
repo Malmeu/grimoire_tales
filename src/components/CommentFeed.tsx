@@ -1,4 +1,9 @@
 import { useState, useEffect } from 'react';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 interface Comment {
   id: string;
@@ -21,68 +26,119 @@ export default function CommentFeed({ storyId, chapterId }: CommentFeedProps) {
   const [newComment, setNewComment] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   useEffect(() => {
+    checkUser();
     loadComments();
   }, [storyId, chapterId]);
 
+  const checkUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    setCurrentUser(user);
+  };
+
   const loadComments = async () => {
     setIsLoading(true);
-    // Simulation de chargement - à remplacer par Supabase
-    setTimeout(() => {
-      setComments([
-        {
-          id: '1',
-          user: { username: 'DarkReader42', avatar_url: undefined },
-          content: 'Incroyable chapitre ! La tension monte vraiment. J\'ai hâte de voir la suite !',
-          likes_count: 24,
-          created_at: new Date(Date.now() - 3600000).toISOString()
-        },
-        {
-          id: '2',
-          user: { username: 'FantasyLover', avatar_url: undefined },
-          content: 'L\'ambiance dark fantasy est parfaitement rendue. Bravo à l\'auteur !',
-          likes_count: 18,
-          created_at: new Date(Date.now() - 7200000).toISOString()
-        },
-        {
-          id: '3',
-          user: { username: 'MysticScribe', avatar_url: undefined },
-          content: 'Ce twist à la fin... je ne m\'y attendais pas du tout ! 🔥',
-          likes_count: 31,
-          created_at: new Date(Date.now() - 10800000).toISOString()
-        }
-      ]);
-      setIsLoading(false);
-    }, 500);
+    try {
+      const { data, error } = await supabase
+        .from('comments')
+        .select(`
+          id,
+          content,
+          likes_count,
+          created_at,
+          users!comments_user_id_fkey (username, avatar_url)
+        `)
+        .eq('story_id', storyId)
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        console.error('Error loading comments:', error);
+        setComments([]);
+      } else {
+        setComments((data || []).map((c: any) => ({
+          id: c.id,
+          user: {
+            username: c.users?.username || 'Anonyme',
+            avatar_url: c.users?.avatar_url
+          },
+          content: c.content,
+          likes_count: c.likes_count || 0,
+          created_at: c.created_at
+        })));
+      }
+    } catch (err) {
+      console.error('Error:', err);
+      setComments([]);
+    }
+    setIsLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim()) return;
 
+    if (!currentUser) {
+      alert('Vous devez être connecté pour commenter.');
+      return;
+    }
+
     setIsSubmitting(true);
-    // Simulation - à remplacer par Supabase
-    setTimeout(() => {
-      const comment: Comment = {
-        id: Date.now().toString(),
-        user: { username: 'Vous' },
-        content: newComment,
-        likes_count: 0,
-        created_at: new Date().toISOString()
-      };
-      setComments([comment, ...comments]);
-      setNewComment('');
-      setIsSubmitting(false);
-    }, 300);
+    try {
+      const { data, error } = await supabase
+        .from('comments')
+        .insert({
+          story_id: storyId,
+          chapter_id: chapterId || null,
+          user_id: currentUser.id,
+          content: newComment.trim()
+        })
+        .select(`
+          id,
+          content,
+          likes_count,
+          created_at,
+          users!comments_user_id_fkey (username, avatar_url)
+        `)
+        .single();
+      
+      if (error) {
+        console.error('Error posting comment:', error);
+        alert('Erreur lors de la publication du commentaire.');
+      } else if (data) {
+        const newCommentObj: Comment = {
+          id: data.id,
+          user: {
+            username: data.users?.username || 'Vous',
+            avatar_url: data.users?.avatar_url
+          },
+          content: data.content,
+          likes_count: 0,
+          created_at: data.created_at
+        };
+        setComments([newCommentObj, ...comments]);
+        setNewComment('');
+      }
+    } catch (err) {
+      console.error('Error:', err);
+    }
+    setIsSubmitting(false);
   };
 
-  const handleLike = (commentId: string) => {
+  const handleLike = async (commentId: string) => {
+    // Optimistic update
     setComments(comments.map(c => 
       c.id === commentId 
         ? { ...c, likes_count: c.likes_count + 1 }
         : c
     ));
+    
+    // Update in database
+    await supabase
+      .from('comments')
+      .update({ likes_count: comments.find(c => c.id === commentId)!.likes_count + 1 })
+      .eq('id', commentId);
   };
 
   const formatDate = (dateString: string) => {
