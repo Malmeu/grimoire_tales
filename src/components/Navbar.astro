@@ -1,4 +1,6 @@
 ---
+import ThemeSwitcher from './ThemeSwitcher';
+
 const navLinks = [
   { href: '/', label: 'Accueil' },
   { href: '/catalogue', label: 'Catalogue' },
@@ -48,12 +50,15 @@ const navLinks = [
         ))}
       </div>
 
-      <!-- Auth Buttons -->
-      <div class="flex items-center gap-4">
-        <a href="/login" class="text-parchment hover:text-gold-old transition-colors">
+      <!-- Theme Switcher & Auth Buttons -->
+      <div class="flex items-center gap-3">
+        <!-- Theme Switcher -->
+        <ThemeSwitcher client:load />
+        
+        <a href="/login" class="hidden sm:inline text-parchment hover:text-gold-old transition-colors">
           Connexion
         </a>
-        <a href="/register" class="glow-button text-sm">
+        <a href="/register" class="hidden sm:inline glow-button text-sm">
           S'inscrire
         </a>
         

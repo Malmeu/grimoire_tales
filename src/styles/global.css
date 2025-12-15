@@ -1,10 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
+/* ===== THEME: DARK FANTASY (Default) ===== */
+:root,
+[data-theme="dark-fantasy"] {
   --dark-void: #1a0d1e;
   --dark-purple: #2d1b3c;
   --parchment: #b89778;
@@ -13,6 +15,51 @@
   --gold-bright: #ffd700;
   --blood-red: #8b0000;
   --mystic-blue: #4a5568;
+  
+  --bg-primary: var(--dark-void);
+  --bg-secondary: var(--dark-purple);
+  --text-primary: var(--parchment-light);
+  --text-secondary: var(--parchment);
+  --accent-primary: var(--gold-old);
+  --accent-secondary: var(--gold-bright);
+  --accent-danger: var(--blood-red);
+  
+  --font-title: 'Cinzel', serif;
+  --card-bg: linear-gradient(145deg, rgba(184, 151, 120, 0.1) 0%, rgba(212, 196, 168, 0.05) 100%);
+  --card-border: rgba(232, 192, 123, 0.2);
+  --glow-color: rgba(232, 192, 123, 0.3);
+}
+
+/* ===== THEME: ANIME MANGA (Lovecraftian Dark Gore) ===== */
+[data-theme="anime-manga"] {
+  --dark-void: #050505;
+  --dark-purple: #0a0808;
+  --parchment: #8a7a6a;
+  --parchment-light: #c4b8a8;
+  --gold-old: #8b0000;
+  --gold-bright: #cc0000;
+  --blood-red: #660000;
+  --mystic-blue: #1a1a2e;
+  
+  --bg-primary: #050505;
+  --bg-secondary: #0a0808;
+  --text-primary: #c4b8a8;
+  --text-secondary: #6a5a4a;
+  --accent-primary: #8b0000;
+  --accent-secondary: #cc0000;
+  --accent-danger: #4a0000;
+  
+  --font-title: 'Cinzel', serif;
+  --card-bg: linear-gradient(145deg, rgba(139, 0, 0, 0.08) 0%, rgba(10, 8, 8, 0.9) 100%);
+  --card-border: rgba(139, 0, 0, 0.4);
+  --glow-color: rgba(139, 0, 0, 0.5);
+  
+  --eldritch-red: #8b0000;
+  --eldritch-crimson: #660000;
+  --eldritch-black: #050505;
+  --eldritch-grey: #1a1a1a;
+  --tentacle-purple: #2d1b2d;
+  --void-green: #0a1a0a;
 }
 
 * {
@@ -254,4 +301,272 @@ body {
 
 .star-rating .star:hover ~ .star {
   color: rgba(232, 192, 123, 0.3);
+}
+
+/* ===== LOVECRAFTIAN DARK GORE THEME STYLES ===== */
+
+/* Eldritch Background */
+[data-theme="anime-manga"] body {
+  background: 
+    radial-gradient(ellipse at 50% 100%, rgba(139, 0, 0, 0.15) 0%, transparent 50%),
+    linear-gradient(180deg, #050505 0%, #0a0808 30%, #050505 100%);
+  font-family: 'Inter', sans-serif;
+}
+
+/* Gothic Horror Titles */
+[data-theme="anime-manga"] .gothic-title {
+  font-family: 'Cinzel', serif;
+  color: var(--eldritch-red);
+  text-shadow: 
+    0 0 10px rgba(139, 0, 0, 0.8),
+    0 0 30px rgba(139, 0, 0, 0.4),
+    0 2px 4px rgba(0, 0, 0, 0.9);
+  letter-spacing: 3px;
+}
+
+/* Blood-stained Cards */
+[data-theme="anime-manga"] .parchment-card {
+  background: 
+    linear-gradient(145deg, rgba(139, 0, 0, 0.1) 0%, rgba(5, 5, 5, 0.95) 100%);
+  border: 1px solid rgba(139, 0, 0, 0.5);
+  box-shadow: 
+    0 0 30px rgba(0, 0, 0, 0.8),
+    inset 0 0 50px rgba(139, 0, 0, 0.05);
+}
+
+[data-theme="anime-manga"] .parchment-card::before {
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+}
+
+/* Blood Button */
+[data-theme="anime-manga"] .glow-button {
+  background: linear-gradient(135deg, #8b0000 0%, #4a0000 100%);
+  color: #c4b8a8;
+  box-shadow: 
+    0 0 20px rgba(139, 0, 0, 0.6),
+    0 4px 15px rgba(0, 0, 0, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border: 1px solid rgba(139, 0, 0, 0.6);
+}
+
+[data-theme="anime-manga"] .glow-button:hover {
+  box-shadow: 
+    0 0 40px rgba(139, 0, 0, 0.8),
+    0 0 60px rgba(102, 0, 0, 0.5),
+    0 8px 25px rgba(0, 0, 0, 0.9);
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #a00000 0%, #660000 100%);
+}
+
+/* Void Glass */
+[data-theme="anime-manga"] .glass-dark {
+  background: rgba(5, 5, 5, 0.95);
+  border: 1px solid rgba(139, 0, 0, 0.3);
+  box-shadow: 
+    0 0 40px rgba(0, 0, 0, 0.9),
+    inset 0 0 20px rgba(139, 0, 0, 0.05);
+}
+
+/* Eldritch Mist - Creeping Horror */
+[data-theme="anime-manga"] .mist-overlay {
+  background: 
+    radial-gradient(ellipse at 10% 90%, rgba(139, 0, 0, 0.2) 0%, transparent 40%),
+    radial-gradient(ellipse at 90% 10%, rgba(45, 27, 45, 0.3) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0.4) 0%, transparent 60%);
+  animation: eldritchMist 20s ease-in-out infinite;
+}
+
+@keyframes eldritchMist {
+  0%, 100% { 
+    opacity: 0.7; 
+    transform: translateX(0) translateY(0) scale(1); 
+  }
+  25% { 
+    opacity: 0.9; 
+    transform: translateX(10px) translateY(-5px) scale(1.02); 
+  }
+  50% { 
+    opacity: 0.6; 
+    transform: translateX(-5px) translateY(10px) scale(0.98); 
+  }
+  75% { 
+    opacity: 0.85; 
+    transform: translateX(-10px) translateY(-10px) scale(1.01); 
+  }
+}
+
+/* Blood Scrollbar */
+[data-theme="anime-manga"] ::-webkit-scrollbar-track {
+  background: #050505;
+}
+
+[data-theme="anime-manga"] ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #8b0000 0%, #4a0000 100%);
+  border-radius: 4px;
+}
+
+[data-theme="anime-manga"] ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #a00000 0%, #660000 100%);
+}
+
+/* Horror Story Card */
+[data-theme="anime-manga"] .story-card {
+  border: 1px solid rgba(139, 0, 0, 0.4);
+  position: relative;
+}
+
+[data-theme="anime-manga"] .story-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, transparent 60%, rgba(139, 0, 0, 0.1) 100%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+[data-theme="anime-manga"] .story-card:hover {
+  transform: translateY(-8px) rotateX(2deg);
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.9),
+    0 0 50px rgba(139, 0, 0, 0.3),
+    0 0 100px rgba(139, 0, 0, 0.1);
+  border-color: var(--eldritch-red);
+}
+
+[data-theme="anime-manga"] .story-card:hover::after {
+  opacity: 1;
+}
+
+/* Ritual Loader */
+[data-theme="anime-manga"] .incantation-loader {
+  border-top-color: var(--eldritch-red);
+}
+
+[data-theme="anime-manga"] .incantation-loader::before {
+  border-top-color: var(--eldritch-crimson);
+}
+
+/* Blood Star Rating */
+[data-theme="anime-manga"] .star-rating .star {
+  color: rgba(139, 0, 0, 0.3);
+}
+
+[data-theme="anime-manga"] .star-rating .star.filled {
+  color: var(--eldritch-red);
+  filter: drop-shadow(0 0 3px var(--eldritch-red));
+}
+
+/* Floating Horror Animation */
+[data-theme="anime-manga"] .floating-shadow {
+  animation: horrorFloat 8s ease-in-out infinite;
+}
+
+@keyframes horrorFloat {
+  0%, 100% { 
+    transform: translateY(0);
+    box-shadow: 
+      0 10px 40px rgba(0, 0, 0, 0.9),
+      0 0 30px rgba(139, 0, 0, 0.2);
+  }
+  50% { 
+    transform: translateY(-8px);
+    box-shadow: 
+      0 20px 60px rgba(0, 0, 0, 0.95),
+      0 0 50px rgba(139, 0, 0, 0.3);
+  }
+}
+
+/* Eldritch Markdown Content */
+[data-theme="anime-manga"] .markdown-content h1,
+[data-theme="anime-manga"] .markdown-content h2,
+[data-theme="anime-manga"] .markdown-content h3 {
+  font-family: 'Cinzel', serif;
+  color: var(--eldritch-red);
+  text-shadow: 0 0 15px rgba(139, 0, 0, 0.5);
+}
+
+[data-theme="anime-manga"] .markdown-content blockquote {
+  border-left: 3px solid var(--eldritch-red);
+  background: rgba(139, 0, 0, 0.08);
+  padding: 1rem;
+  border-radius: 0 4px 4px 0;
+  font-style: italic;
+}
+
+[data-theme="anime-manga"] .markdown-content code {
+  background: rgba(139, 0, 0, 0.1);
+  border: 1px solid rgba(139, 0, 0, 0.3);
+  color: #c4b8a8;
+}
+
+/* Madness Pulse Effect */
+[data-theme="anime-manga"] .pulse-horror {
+  animation: madnessPulse 3s ease-in-out infinite;
+}
+
+@keyframes madnessPulse {
+  0%, 100% { 
+    opacity: 1;
+    filter: brightness(1);
+  }
+  50% { 
+    opacity: 0.9;
+    filter: brightness(0.95);
+  }
+}
+
+/* Tentacle Border Effect */
+[data-theme="anime-manga"] .tentacle-border {
+  position: relative;
+}
+
+[data-theme="anime-manga"] .tentacle-border::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    transparent 30%, 
+    rgba(139, 0, 0, 0.3) 50%, 
+    transparent 70%
+  );
+  background-size: 200% 200%;
+  animation: tentacleMove 4s ease-in-out infinite;
+  border-radius: inherit;
+  z-index: -1;
+}
+
+@keyframes tentacleMove {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Blood Drip Effect */
+[data-theme="anime-manga"] .blood-drip {
+  position: relative;
+  overflow: visible;
+}
+
+[data-theme="anime-manga"] .blood-drip::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 20%;
+  width: 4px;
+  height: 15px;
+  background: linear-gradient(180deg, var(--eldritch-red) 0%, transparent 100%);
+  border-radius: 0 0 50% 50%;
+  animation: drip 4s ease-in-out infinite;
+}
+
+@keyframes drip {
+  0%, 100% { height: 15px; opacity: 0.8; }
+  50% { height: 25px; opacity: 0.4; }
 }
