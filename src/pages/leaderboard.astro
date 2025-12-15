@@ -1,0 +1,161 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+
+const weeklyTop = [
+  { rank: 1, title: 'Les Chroniques du Crépuscule', author: 'DarkScribe', views: 12500, likes: 890, type: 'novel' },
+  { rank: 2, title: 'Le Dernier Gardien', author: 'ShadowArtist', views: 9800, likes: 720, type: 'comic' },
+  { rank: 3, title: 'Ombre et Lumière', author: 'MysticWriter', views: 8200, likes: 650, type: 'novel' },
+  { rank: 4, title: 'Cyber Samurai 2099', author: 'NeonBlade', views: 7500, likes: 580, type: 'comic' },
+  { rank: 5, title: 'La Guilde des Ombres', author: 'SilentAssassin', views: 6900, likes: 510, type: 'novel' },
+];
+
+const monthlyTop = [
+  { rank: 1, title: 'Les Chroniques du Crépuscule', author: 'DarkScribe', views: 45230, likes: 3200, type: 'novel' },
+  { rank: 2, title: 'Royaume des Âmes Perdues', author: 'NightTeller', views: 38000, likes: 2800, type: 'book' },
+  { rank: 3, title: 'Le Dernier Gardien', author: 'ShadowArtist', views: 28500, likes: 2100, type: 'comic' },
+  { rank: 4, title: 'Ombre et Lumière', author: 'MysticWriter', views: 25000, likes: 1900, type: 'novel' },
+  { rank: 5, title: 'Cyber Samurai 2099', author: 'NeonBlade', views: 22400, likes: 1700, type: 'comic' },
+];
+
+const topAuthors = [
+  { rank: 1, username: 'DarkScribe', followers: 5200, stories: 12, totalViews: 125000 },
+  { rank: 2, username: 'ShadowArtist', followers: 4100, stories: 8, totalViews: 98000 },
+  { rank: 3, username: 'MysticWriter', followers: 3800, stories: 15, totalViews: 87000 },
+  { rank: 4, username: 'NightTeller', followers: 3200, stories: 6, totalViews: 72000 },
+  { rank: 5, username: 'NeonBlade', followers: 2900, stories: 10, totalViews: 65000 },
+];
+
+const formatNumber = (num: number) => {
+  if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+  if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+  return num.toString();
+};
+
+const getRankIcon = (rank: number) => {
+  if (rank === 1) return '🥇';
+  if (rank === 2) return '🥈';
+  if (rank === 3) return '🥉';
+  return rank.toString();
+};
+
+const typeLabels: Record<string, string> = {
+  novel: 'Novel',
+  book: 'Livre',
+  comic: 'BD'
+};
+---
+
+<BaseLayout title="Classement" description="Découvrez les histoires et auteurs les plus populaires">
+  <Navbar />
+  
+  <main class="pt-24 pb-20 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12">
+        <h1 class="gothic-title text-4xl md:text-5xl mb-4">Classement</h1>
+        <p class="text-parchment/70">Les histoires et auteurs qui font vibrer notre communauté</p>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-8">
+        <!-- Weekly Top -->
+        <section class="parchment-card rounded-xl p-6">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="text-2xl">🔥</span>
+            <h2 class="font-gothic text-2xl text-gold-old">Top Hebdomadaire</h2>
+          </div>
+          
+          <div class="space-y-3">
+            {weeklyTop.map((item) => (
+              <a 
+                href={`/stories/${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                class="flex items-center gap-4 p-3 rounded-lg hover:bg-gold-old/5 transition-colors group"
+              >
+                <div class="w-10 h-10 flex items-center justify-center text-xl">
+                  {getRankIcon(item.rank)}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h3 class="text-parchment-light group-hover:text-gold-old transition-colors truncate">
+                    {item.title}
+                  </h3>
+                  <p class="text-sm text-parchment/60">
+                    par {item.author} • <span class="text-gold-old/70">{typeLabels[item.type]}</span>
+                  </p>
+                </div>
+                <div class="text-right text-sm">
+                  <div class="text-parchment-light">{formatNumber(item.views)} vues</div>
+                  <div class="text-parchment/60">{formatNumber(item.likes)} ❤️</div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+
+        <!-- Monthly Top -->
+        <section class="parchment-card rounded-xl p-6">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="text-2xl">⭐</span>
+            <h2 class="font-gothic text-2xl text-gold-old">Top Mensuel</h2>
+          </div>
+          
+          <div class="space-y-3">
+            {monthlyTop.map((item) => (
+              <a 
+                href={`/stories/${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                class="flex items-center gap-4 p-3 rounded-lg hover:bg-gold-old/5 transition-colors group"
+              >
+                <div class="w-10 h-10 flex items-center justify-center text-xl">
+                  {getRankIcon(item.rank)}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h3 class="text-parchment-light group-hover:text-gold-old transition-colors truncate">
+                    {item.title}
+                  </h3>
+                  <p class="text-sm text-parchment/60">
+                    par {item.author} • <span class="text-gold-old/70">{typeLabels[item.type]}</span>
+                  </p>
+                </div>
+                <div class="text-right text-sm">
+                  <div class="text-parchment-light">{formatNumber(item.views)} vues</div>
+                  <div class="text-parchment/60">{formatNumber(item.likes)} ❤️</div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      <!-- Top Authors -->
+      <section class="mt-12 parchment-card rounded-xl p-6">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="text-2xl">✍️</span>
+          <h2 class="font-gothic text-2xl text-gold-old">Auteurs Populaires</h2>
+        </div>
+        
+        <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          {topAuthors.map((author) => (
+            <a 
+              href={`/authors/${author.username}`}
+              class="parchment-card p-4 rounded-lg text-center hover:border-gold-old/50 transition-all group"
+            >
+              <div class="text-2xl mb-2">{getRankIcon(author.rank)}</div>
+              <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-dark-purple flex items-center justify-center text-2xl text-gold-old font-gothic">
+                {author.username.charAt(0)}
+              </div>
+              <h3 class="font-gothic text-gold-old group-hover:text-gold-bright transition-colors mb-1">
+                {author.username}
+              </h3>
+              <p class="text-sm text-parchment/60 mb-2">{author.stories} histoires</p>
+              <div class="flex justify-center gap-4 text-xs text-parchment/50">
+                <span>{formatNumber(author.followers)} abonnés</span>
+                <span>{formatNumber(author.totalViews)} vues</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    </div>
+  </main>
+  
+  <Footer />
+</BaseLayout>

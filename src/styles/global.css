@@ -1,0 +1,257 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --dark-void: #1a0d1e;
+  --dark-purple: #2d1b3c;
+  --parchment: #b89778;
+  --parchment-light: #d4c4a8;
+  --gold-old: #e8c07b;
+  --gold-bright: #ffd700;
+  --blood-red: #8b0000;
+  --mystic-blue: #4a5568;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, var(--dark-void) 0%, var(--dark-purple) 50%, var(--dark-void) 100%);
+  color: var(--parchment-light);
+  min-height: 100vh;
+}
+
+/* Scrollbar Dark Fantasy */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--dark-void);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--dark-purple);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-old);
+}
+
+/* Mist Effect */
+.mist-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  background: 
+    radial-gradient(ellipse at 20% 80%, rgba(45, 27, 60, 0.4) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(26, 13, 30, 0.3) 0%, transparent 50%);
+  animation: mistMove 15s ease-in-out infinite;
+}
+
+@keyframes mistMove {
+  0%, 100% { opacity: 0.5; transform: translateX(0); }
+  50% { opacity: 0.8; transform: translateX(30px); }
+}
+
+/* Parchment Card Effect */
+.parchment-card {
+  background: linear-gradient(145deg, rgba(184, 151, 120, 0.1) 0%, rgba(212, 196, 168, 0.05) 100%);
+  border: 1px solid rgba(232, 192, 123, 0.2);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.parchment-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/* Gothic Title */
+.gothic-title {
+  font-family: 'Cinzel', serif;
+  color: var(--gold-old);
+  text-shadow: 0 0 20px rgba(232, 192, 123, 0.3);
+}
+
+/* Glow Button */
+.glow-button {
+  background: linear-gradient(135deg, var(--gold-old) 0%, #c9a55a 100%);
+  color: var(--dark-void);
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 20px rgba(232, 192, 123, 0.3);
+}
+
+.glow-button:hover {
+  box-shadow: 0 0 40px rgba(232, 192, 123, 0.6);
+  transform: translateY(-2px);
+}
+
+/* Glassmorphism Dark */
+.glass-dark {
+  background: rgba(26, 13, 30, 0.7);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(232, 192, 123, 0.1);
+}
+
+/* Floating Shadows Animation */
+.floating-shadow {
+  animation: floatShadow 6s ease-in-out infinite;
+}
+
+@keyframes floatShadow {
+  0%, 100% { 
+    transform: translateY(0);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  }
+  50% { 
+    transform: translateY(-10px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* Torn Page Effect */
+.torn-edge {
+  position: relative;
+}
+
+.torn-edge::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(135deg, 
+    transparent 33.33%, 
+    var(--dark-void) 33.33%, 
+    var(--dark-void) 66.66%, 
+    transparent 66.66%
+  );
+  background-size: 20px 20px;
+}
+
+/* Incantation Loader */
+.incantation-loader {
+  width: 60px;
+  height: 60px;
+  border: 3px solid transparent;
+  border-top-color: var(--gold-old);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  position: relative;
+}
+
+.incantation-loader::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  border: 3px solid transparent;
+  border-top-color: var(--parchment);
+  border-radius: 50%;
+  animation: spin 2s linear infinite reverse;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Story Card Hover */
+.story-card {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.story-card:hover {
+  transform: translateY(-8px) rotateX(2deg);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(232, 192, 123, 0.2);
+}
+
+/* Markdown Content Styling */
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3 {
+  font-family: 'Cinzel', serif;
+  color: var(--gold-old);
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.markdown-content p {
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+
+.markdown-content blockquote {
+  border-left: 3px solid var(--gold-old);
+  padding-left: 1rem;
+  font-style: italic;
+  color: var(--parchment);
+}
+
+.markdown-content code {
+  font-family: 'JetBrains Mono', monospace;
+  background: rgba(45, 27, 60, 0.5);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+}
+
+/* Comic Viewer */
+.comic-page {
+  transition: transform 0.3s ease;
+  cursor: zoom-in;
+}
+
+.comic-page.zoomed {
+  cursor: zoom-out;
+  transform: scale(1.5);
+}
+
+/* Rating Stars */
+.star-rating {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.star-rating .star {
+  color: rgba(232, 192, 123, 0.3);
+  transition: color 0.2s ease;
+}
+
+.star-rating .star.filled {
+  color: var(--gold-old);
+}
+
+.star-rating:hover .star {
+  color: var(--gold-old);
+}
+
+.star-rating .star:hover ~ .star {
+  color: rgba(232, 192, 123, 0.3);
+}

@@ -1,0 +1,167 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Navbar from '../../../../components/Navbar.astro';
+
+export const prerender = false;
+
+const { slug, number } = Astro.params;
+const chapterNumber = parseInt(number || '1');
+
+// Simulation de données - à remplacer par Supabase
+const story = {
+  title: 'Les Chroniques du Crépuscule Éternel',
+  slug: slug,
+  totalChapters: 5
+};
+
+const chapter = {
+  id: '1',
+  title: chapterNumber === 1 ? 'Prologue: La Nuit Éternelle' : `Chapitre ${chapterNumber - 1}`,
+  number: chapterNumber,
+  content: `
+# ${chapterNumber === 1 ? 'Prologue: La Nuit Éternelle' : `Chapitre ${chapterNumber - 1}`}
+
+La brume s'élevait des ruines anciennes, enveloppant les pierres millénaires d'un voile spectral. Kael observait le paysage désolé depuis le sommet de la tour effondrée, ses yeux perçant l'obscurité perpétuelle qui régnait sur ce monde.
+
+> "Dans les ténèbres, seuls ceux qui portent la lumière en eux peuvent espérer survivre."
+
+Ces mots de son maître résonnaient encore dans son esprit, même après toutes ces années. Le vieux sage avait disparu lors de la Grande Extinction, comme tant d'autres. Mais son enseignement demeurait, gravé dans la mémoire de son dernier apprenti.
+
+## L'Appel des Ombres
+
+Les créatures de la nuit commençaient à s'agiter. Kael pouvait sentir leur présence, une pression froide contre sa conscience. Elles étaient attirées par la magie qui coulait dans ses veines – un don rare dans ce monde où la lumière avait été bannie.
+
+Il serra le grimoire contre sa poitrine. Ce livre, découvert dans les profondeurs d'une crypte oubliée, contenait des secrets que personne n'avait osé dévoiler depuis des siècles. Des incantations capables de ramener la lumière... ou de plonger le monde dans une obscurité encore plus profonde.
+
+---
+
+Le vent hurlait à travers les décombres, portant avec lui les échos d'un passé révolu. Kael ferma les yeux et se concentra sur le flux d'énergie qui l'entourait. Quelque part, au-delà des montagnes de cendres, une lueur persistait. Faible, vacillante, mais réelle.
+
+*C'était là qu'il devait aller.*
+
+## Le Premier Pas
+
+Sans un regard en arrière, il descendit les marches usées de la tour. Chaque pas l'éloignait de tout ce qu'il avait connu, mais le rapprochait de son destin. Le grimoire pulsait doucement contre son cœur, comme s'il approuvait sa décision.
+
+Les ombres s'écartèrent sur son passage, non pas par peur, mais par respect. Elles reconnaissaient en lui quelque chose d'ancien, quelque chose qui avait existé avant même que les ténèbres ne s'abattent sur le monde.
+
+**La quête avait commencé.**
+  `
+};
+
+const hasNextChapter = chapterNumber < story.totalChapters;
+const hasPrevChapter = chapterNumber > 1;
+---
+
+<BaseLayout title={`${chapter.title} - ${story.title}`}>
+  <Navbar />
+  
+  <main class="pt-20 pb-20 min-h-screen">
+    <!-- Reading Header -->
+    <div class="fixed top-16 left-0 right-0 z-40 glass-dark border-b border-gold-old/10">
+      <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+        <a href={`/stories/${slug}`} class="flex items-center gap-2 text-parchment/70 hover:text-gold-old transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+          <span class="hidden sm:inline">{story.title}</span>
+        </a>
+        
+        <div class="flex items-center gap-4">
+          <span class="text-parchment/50 text-sm">
+            Chapitre {chapterNumber} / {story.totalChapters}
+          </span>
+          
+          <!-- Reading Settings -->
+          <button id="settings-btn" class="p-2 text-parchment/70 hover:text-gold-old transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chapter Content -->
+    <article class="max-w-3xl mx-auto px-4 pt-24">
+      <header class="text-center mb-12">
+        <p class="text-gold-old/70 mb-2">Chapitre {chapterNumber}</p>
+        <h1 class="gothic-title text-3xl md:text-4xl">{chapter.title}</h1>
+      </header>
+      
+      <div class="markdown-content prose prose-invert max-w-none" id="chapter-content">
+        <!-- Le contenu Markdown sera rendu ici -->
+      </div>
+    </article>
+
+    <!-- Chapter Navigation -->
+    <nav class="max-w-3xl mx-auto px-4 mt-16 pt-8 border-t border-gold-old/20">
+      <div class="flex items-center justify-between">
+        {hasPrevChapter ? (
+          <a 
+            href={`/stories/${slug}/chapter/${chapterNumber - 1}`}
+            class="flex items-center gap-2 px-6 py-3 parchment-card rounded-lg hover:border-gold-old/50 transition-colors"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            <span>Chapitre précédent</span>
+          </a>
+        ) : (
+          <div></div>
+        )}
+        
+        {hasNextChapter ? (
+          <a 
+            href={`/stories/${slug}/chapter/${chapterNumber + 1}`}
+            class="flex items-center gap-2 px-6 py-3 glow-button"
+          >
+            <span>Chapitre suivant</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </a>
+        ) : (
+          <a 
+            href={`/stories/${slug}`}
+            class="flex items-center gap-2 px-6 py-3 glow-button"
+          >
+            <span>Fin de l'histoire</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+          </a>
+        )}
+      </div>
+    </nav>
+  </main>
+</BaseLayout>
+
+<script define:vars={{ content: chapter.content }}>
+  // Simple Markdown parser
+  function parseMarkdown(text) {
+    return text
+      .replace(/^### (.+)$/gm, '<h3 class="font-gothic text-xl text-gold-old mt-8 mb-4">$1</h3>')
+      .replace(/^## (.+)$/gm, '<h2 class="font-gothic text-2xl text-gold-old mt-10 mb-5">$1</h2>')
+      .replace(/^# (.+)$/gm, '<h1 class="font-gothic text-3xl text-gold-old mt-12 mb-6">$1</h1>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold text-parchment-light">$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em class="italic text-parchment/90">$1</em>')
+      .replace(/^> (.+)$/gm, '<blockquote class="border-l-4 border-gold-old/50 pl-4 my-6 italic text-parchment/80">$1</blockquote>')
+      .replace(/^---$/gm, '<hr class="border-gold-old/20 my-10" />')
+      .replace(/\n\n/g, '</p><p class="mb-6 leading-relaxed text-lg">')
+      .replace(/\n/g, '<br />');
+  }
+
+  const contentEl = document.getElementById('chapter-content');
+  if (contentEl) {
+    contentEl.innerHTML = '<p class="mb-6 leading-relaxed text-lg">' + parseMarkdown(content) + '</p>';
+  }
+</script>
+
+<style>
+  .markdown-content {
+    font-size: 1.125rem;
+    line-height: 1.9;
+  }
+</style>

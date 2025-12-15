@@ -1,0 +1,183 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/Navbar.astro';
+import Editor from '../components/Editor';
+---
+
+<BaseLayout title="Écrire une histoire">
+  <Navbar />
+  
+  <main class="pt-24 pb-20 px-4">
+    <div class="max-w-4xl mx-auto">
+      <div class="mb-8">
+        <h1 class="gothic-title text-3xl md:text-4xl mb-2">Nouvelle Histoire</h1>
+        <p class="text-parchment/70">Donnez vie à votre imagination</p>
+      </div>
+
+      <form id="story-form" class="space-y-6">
+        <!-- Title -->
+        <div>
+          <label for="title" class="block text-sm text-parchment mb-2">Titre de l'histoire *</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            required
+            class="w-full px-4 py-3 bg-dark-void/50 border border-gold-old/20 rounded-lg text-parchment-light placeholder-parchment/40 focus:outline-none focus:border-gold-old/50 transition-colors text-xl font-gothic"
+            placeholder="Le titre de votre chef-d'œuvre..."
+          />
+        </div>
+
+        <!-- Type & Genre -->
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label for="type" class="block text-sm text-parchment mb-2">Type *</label>
+            <select
+              id="type"
+              name="type"
+              required
+              class="w-full px-4 py-3 bg-dark-void/50 border border-gold-old/20 rounded-lg text-parchment-light focus:outline-none focus:border-gold-old/50 transition-colors"
+            >
+              <option value="novel">Novel (chapitres)</option>
+              <option value="book">Livre complet</option>
+              <option value="comic">BD / Manga</option>
+            </select>
+          </div>
+          <div>
+            <label for="genre" class="block text-sm text-parchment mb-2">Genre *</label>
+            <select
+              id="genre"
+              name="genre"
+              required
+              class="w-full px-4 py-3 bg-dark-void/50 border border-gold-old/20 rounded-lg text-parchment-light focus:outline-none focus:border-gold-old/50 transition-colors"
+            >
+              <option value="dark-fantasy">Dark Fantasy</option>
+              <option value="fantasy">Fantasy</option>
+              <option value="sci-fi">Sci-Fi</option>
+              <option value="anime">Anime</option>
+              <option value="gaming">Gaming</option>
+              <option value="horreur">Horreur</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label for="description" class="block text-sm text-parchment mb-2">Description *</label>
+          <textarea
+            id="description"
+            name="description"
+            required
+            rows="3"
+            class="w-full px-4 py-3 bg-dark-void/50 border border-gold-old/20 rounded-lg text-parchment-light placeholder-parchment/40 focus:outline-none focus:border-gold-old/50 transition-colors resize-none"
+            placeholder="Un résumé captivant de votre histoire..."
+          ></textarea>
+        </div>
+
+        <!-- Tags -->
+        <div>
+          <label for="tags" class="block text-sm text-parchment mb-2">Tags (séparés par des virgules)</label>
+          <input
+            type="text"
+            id="tags"
+            name="tags"
+            class="w-full px-4 py-3 bg-dark-void/50 border border-gold-old/20 rounded-lg text-parchment-light placeholder-parchment/40 focus:outline-none focus:border-gold-old/50 transition-colors"
+            placeholder="magie, dragons, aventure..."
+          />
+        </div>
+
+        <!-- Cover Upload -->
+        <div>
+          <label class="block text-sm text-parchment mb-2">Image de couverture</label>
+          <div class="parchment-card p-8 rounded-lg border-2 border-dashed border-gold-old/30 text-center hover:border-gold-old/50 transition-colors cursor-pointer" id="cover-dropzone">
+            <svg class="w-12 h-12 mx-auto mb-4 text-parchment/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <p class="text-parchment/70 mb-2">Glissez une image ou cliquez pour sélectionner</p>
+            <p class="text-sm text-parchment/50">PNG, JPG jusqu'à 5MB • Ratio recommandé: 3:4</p>
+            <input type="file" id="cover-input" accept="image/*" class="hidden" />
+          </div>
+        </div>
+
+        <!-- Chapter Title (for novels) -->
+        <div id="chapter-section">
+          <label for="chapter-title" class="block text-sm text-parchment mb-2">Titre du premier chapitre</label>
+          <input
+            type="text"
+            id="chapter-title"
+            name="chapter-title"
+            class="w-full px-4 py-3 bg-dark-void/50 border border-gold-old/20 rounded-lg text-parchment-light placeholder-parchment/40 focus:outline-none focus:border-gold-old/50 transition-colors"
+            placeholder="Prologue, Chapitre 1..."
+          />
+        </div>
+
+        <!-- Editor -->
+        <div>
+          <label class="block text-sm text-parchment mb-2">Contenu *</label>
+          <Editor client:load placeholder="Commencez à écrire votre histoire... Utilisez Markdown pour le formatage." />
+        </div>
+
+        <!-- Actions -->
+        <div class="flex flex-wrap gap-4 pt-4">
+          <button type="submit" class="glow-button px-8 py-3 text-lg">
+            Publier l'histoire
+          </button>
+          <button type="button" class="px-8 py-3 border border-gold-old/50 text-gold-old rounded hover:bg-gold-old/10 transition-colors">
+            Sauvegarder en brouillon
+          </button>
+          <button type="button" class="px-8 py-3 text-parchment/50 hover:text-parchment transition-colors">
+            Aperçu
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  // Cover upload handling
+  const dropzone = document.getElementById('cover-dropzone');
+  const coverInput = document.getElementById('cover-input') as HTMLInputElement;
+  
+  dropzone?.addEventListener('click', () => coverInput?.click());
+  
+  dropzone?.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropzone.classList.add('border-gold-old');
+  });
+  
+  dropzone?.addEventListener('dragleave', () => {
+    dropzone.classList.remove('border-gold-old');
+  });
+  
+  dropzone?.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('border-gold-old');
+    const files = (e as DragEvent).dataTransfer?.files;
+    if (files?.[0]) handleFile(files[0]);
+  });
+  
+  coverInput?.addEventListener('change', () => {
+    if (coverInput.files?.[0]) handleFile(coverInput.files[0]);
+  });
+  
+  function handleFile(file: File) {
+    if (!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (dropzone) {
+        dropzone.innerHTML = `<img src="${e.target?.result}" alt="Cover preview" class="max-h-48 mx-auto rounded-lg" />`;
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Form submission
+  const form = document.getElementById('story-form');
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    // TODO: Intégrer Supabase
+    console.log('Story submitted');
+    alert('Histoire publiée avec succès !');
+  });
+</script>

@@ -1,0 +1,93 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import ComicViewer from '../../components/ComicViewer';
+import CommentFeed from '../../components/CommentFeed';
+
+export const prerender = false;
+
+const { id } = Astro.params;
+
+// Simulation de données - à remplacer par Supabase
+const comic = {
+  id: id,
+  title: 'Le Dernier Gardien',
+  author: {
+    username: 'ShadowArtist',
+    avatar_url: null
+  },
+  description: 'Dans un futur cyberpunk, le dernier gardien de l\'ancienne magie doit protéger les secrets du passé.',
+  genre: 'Sci-Fi',
+  tags: ['cyberpunk', 'IA', 'futur', 'magie'],
+  views: 28500,
+  rating: 4.7,
+  pages: [
+    'https://images.unsplash.com/photo-1551269901-5c5e14c25df7?w=800&h=1200&fit=crop',
+    'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&h=1200&fit=crop',
+    'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&h=1200&fit=crop',
+    'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&h=1200&fit=crop',
+    'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&h=1200&fit=crop',
+  ]
+};
+---
+
+<BaseLayout title={comic.title} description={comic.description}>
+  <Navbar />
+  
+  <main class="pt-20 pb-20">
+    <!-- Comic Info Header -->
+    <section class="max-w-6xl mx-auto px-4 py-8">
+      <div class="flex flex-col md:flex-row items-start gap-6 mb-8">
+        <div class="flex-1">
+          <div class="flex flex-wrap gap-2 mb-3">
+            <span class="px-3 py-1 bg-gold-old/20 text-gold-old text-sm rounded-full">BD</span>
+            <span class="px-3 py-1 bg-dark-purple/50 text-parchment text-sm rounded-full">{comic.genre}</span>
+          </div>
+          
+          <h1 class="gothic-title text-3xl md:text-4xl mb-3">{comic.title}</h1>
+          
+          <div class="flex items-center gap-3 mb-4">
+            <span class="text-parchment/70">par</span>
+            <a href={`/authors/${comic.author.username}`} class="text-gold-old hover:text-gold-bright transition-colors">
+              {comic.author.username}
+            </a>
+            <span class="text-parchment/50">•</span>
+            <span class="text-parchment/70">{comic.pages.length} pages</span>
+          </div>
+          
+          <p class="text-parchment/80 max-w-2xl">{comic.description}</p>
+        </div>
+        
+        <div class="flex items-center gap-4">
+          <button class="px-4 py-2 border border-gold-old/50 text-gold-old rounded hover:bg-gold-old/10 transition-colors flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
+            Favoris
+          </button>
+          <button class="px-4 py-2 border border-gold-old/50 text-gold-old rounded hover:bg-gold-old/10 transition-colors flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+            </svg>
+            Partager
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comic Viewer -->
+    <section class="max-w-6xl mx-auto px-4">
+      <div class="parchment-card rounded-lg overflow-hidden">
+        <ComicViewer client:load pages={comic.pages} title={comic.title} />
+      </div>
+    </section>
+
+    <!-- Comments -->
+    <section class="max-w-6xl mx-auto px-4 py-12">
+      <CommentFeed client:load storyId={comic.id || '1'} />
+    </section>
+  </main>
+  
+  <Footer />
+</BaseLayout>

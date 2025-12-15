@@ -1,0 +1,125 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import StoryCard from '../components/StoryCard.astro';
+import SearchFilters from '../components/SearchFilters';
+
+const allStories = [
+  {
+    id: '1',
+    title: 'Les Chroniques du Crépuscule Éternel',
+    slug: 'chroniques-crepuscule-eternel',
+    author: 'DarkScribe',
+    coverUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&h=600&fit=crop',
+    genre: 'Dark Fantasy',
+    tags: ['magie', 'dragons', 'guerre'],
+    type: 'novel' as const,
+    views: 45230,
+    rating: 4.8
+  },
+  {
+    id: '2',
+    title: 'Ombre et Lumière: La Quête',
+    slug: 'ombre-lumiere-quete',
+    author: 'MysticWriter',
+    coverUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400&h=600&fit=crop',
+    genre: 'Fantasy',
+    tags: ['aventure', 'héros'],
+    type: 'novel' as const,
+    views: 32100,
+    rating: 4.5
+  },
+  {
+    id: '3',
+    title: 'Le Dernier Gardien',
+    slug: 'dernier-gardien',
+    author: 'ShadowArtist',
+    coverUrl: 'https://images.unsplash.com/photo-1551269901-5c5e14c25df7?w=400&h=600&fit=crop',
+    genre: 'Sci-Fi',
+    tags: ['cyberpunk', 'IA'],
+    type: 'comic' as const,
+    views: 28500,
+    rating: 4.7
+  },
+  {
+    id: '4',
+    title: 'Royaume des Âmes Perdues',
+    slug: 'royaume-ames-perdues',
+    author: 'NightTeller',
+    coverUrl: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&h=600&fit=crop',
+    genre: 'Dark Fantasy',
+    tags: ['necromancien', 'mort'],
+    type: 'book' as const,
+    views: 19800,
+    rating: 4.3
+  },
+  {
+    id: '5',
+    title: 'Cyber Samurai 2099',
+    slug: 'cyber-samurai-2099',
+    author: 'NeonBlade',
+    coverUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&h=600&fit=crop',
+    genre: 'Sci-Fi',
+    tags: ['japon', 'futur'],
+    type: 'comic' as const,
+    views: 22400,
+    rating: 4.6
+  },
+  {
+    id: '6',
+    title: 'La Guilde des Ombres',
+    slug: 'guilde-des-ombres',
+    author: 'SilentAssassin',
+    coverUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop',
+    genre: 'Fantasy',
+    tags: ['assassins', 'magie'],
+    type: 'novel' as const,
+    views: 18900,
+    rating: 4.4
+  },
+];
+
+const genres = ['Tous', 'Dark Fantasy', 'Fantasy', 'Sci-Fi', 'Anime', 'Gaming', 'Horreur'];
+const types = ['Tous', 'novel', 'book', 'comic'];
+const sortOptions = ['Popularité', 'Date', 'Note', 'Vues'];
+---
+
+<BaseLayout title="Catalogue" description="Explorez notre collection de novels, livres et BD">
+  <Navbar />
+  
+  <main class="pt-24 pb-20 px-4">
+    <div class="max-w-7xl mx-auto">
+      <div class="mb-10">
+        <h1 class="gothic-title text-4xl md:text-5xl mb-4">Catalogue</h1>
+        <p class="text-parchment/70">Découvrez des milliers d'histoires créées par notre communauté</p>
+      </div>
+      
+      <SearchFilters client:load genres={genres} types={types} sortOptions={sortOptions} />
+      
+      <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {allStories.map(story => (
+          <StoryCard {...story} />
+        ))}
+      </div>
+      
+      <div class="mt-12 flex justify-center">
+        <nav class="flex items-center gap-2">
+          <button class="px-4 py-2 parchment-card rounded hover:border-gold-old/50 transition-colors">
+            ← Précédent
+          </button>
+          <span class="px-4 py-2 bg-gold-old/20 text-gold-old rounded">1</span>
+          <button class="px-4 py-2 parchment-card rounded hover:border-gold-old/50 transition-colors">2</button>
+          <button class="px-4 py-2 parchment-card rounded hover:border-gold-old/50 transition-colors">3</button>
+          <span class="text-parchment/50">...</span>
+          <button class="px-4 py-2 parchment-card rounded hover:border-gold-old/50 transition-colors">12</button>
+          <button class="px-4 py-2 parchment-card rounded hover:border-gold-old/50 transition-colors">
+            Suivant →
+          </button>
+        </nav>
+      </div>
+    </div>
+  </main>
+  
+  <Footer />
+</BaseLayout>
