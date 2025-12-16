@@ -6,6 +6,9 @@ import StoryCard from '../components/StoryCard.astro';
 import SearchFilters from '../components/SearchFilters';
 import { supabase } from '../lib/supabase';
 
+// Désactiver le prerendering pour cette page (rendu SSR dynamique)
+export const prerender = false;
+
 // Récupérer toutes les histoires publiées depuis Supabase
 const { data: storiesData } = await supabase
   .from('stories')

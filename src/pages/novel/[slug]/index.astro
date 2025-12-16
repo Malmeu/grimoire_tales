@@ -5,22 +5,13 @@ import Footer from '../../../components/Footer.astro';
 import CommentFeed from '../../../components/CommentFeed';
 import { supabase } from '../../../lib/supabase';
 
-export async function getStaticPaths() {
-  const { data: stories } = await supabase
-    .from('stories')
-    .select('slug')
-    .eq('type', 'novel')
-    .eq('status', 'published');
-  
-  return (stories || []).map((s: any) => ({
-    params: { slug: s.slug }
-  }));
-}
+// Désactiver le prerendering pour cette page (rendu SSR dynamique)
+export const prerender = false;
 
 const { slug } = Astro.params;
 
 // Récupérer les données depuis Supabase
-const { data: novelData } = await supabase
+const { data: novelDataRaw } = await supabase
   .from('stories')
   .select(`
     *,
@@ -32,9 +23,11 @@ const { data: novelData } = await supabase
   .eq('status', 'published')
   .single();
 
-if (!novelData) {
+if (!novelDataRaw) {
   return Astro.redirect('/404');
 }
+
+const novelData = novelDataRaw as any;
 
 const novel = {
   id: novelData.id,

@@ -4,21 +4,13 @@ import Navbar from '../../../components/Navbar.astro';
 import Editor from '../../../components/Editor';
 import { supabase } from '../../../lib/supabase';
 
-export async function getStaticPaths() {
-  const { data: stories } = await supabase
-    .from('stories')
-    .select('slug')
-    .eq('status', 'published');
-  
-  return (stories || []).map((s: any) => ({
-    params: { slug: s.slug }
-  }));
-}
+// Désactiver le prerendering pour cette page (rendu SSR dynamique)
+export const prerender = false;
 
 const { slug } = Astro.params;
 
 // Récupérer l'histoire
-const { data: story } = await supabase
+const { data: storyRaw } = await supabase
   .from('stories')
   .select(`
     id,
@@ -30,9 +22,11 @@ const { data: story } = await supabase
   .eq('slug', slug)
   .single();
 
-if (!story) {
+if (!storyRaw) {
   return Astro.redirect('/404');
 }
+
+const story = storyRaw as any;
 
 // Compter les chapitres existants
 const { count: chapterCount } = await supabase

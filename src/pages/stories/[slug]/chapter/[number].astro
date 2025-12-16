@@ -3,49 +3,38 @@ import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import Navbar from '../../../../components/Navbar.astro';
 import { supabase } from '../../../../lib/supabase';
 
-// Générer des pages statiques pour les chapitres
-export async function getStaticPaths() {
-  const { data: chapters } = await supabase
-    .from('chapters')
-    .select(`
-      chapter_number,
-      stories!inner (slug, status)
-    `)
-    .eq('stories.status', 'published');
-  
-  return (chapters || []).map((ch: any) => ({
-    params: { 
-      slug: ch.stories.slug, 
-      number: ch.chapter_number.toString() 
-    }
-  }));
-}
+// Désactiver le prerendering pour cette page (rendu SSR dynamique)
+export const prerender = false;
 
 const { slug, number } = Astro.params;
 const chapterNumber = parseInt(number || '1');
 
 // Récupérer les données depuis Supabase
-const { data: storyData } = await supabase
+const { data: storyDataRaw } = await supabase
   .from('stories')
   .select('id, title, slug')
   .eq('slug', slug)
   .eq('status', 'published')
   .single();
 
-if (!storyData) {
+if (!storyDataRaw) {
   return Astro.redirect('/404');
 }
 
-const { data: chapterData } = await supabase
+const storyData = storyDataRaw as any;
+
+const { data: chapterDataRaw } = await supabase
   .from('chapters')
   .select('*')
   .eq('story_id', storyData.id)
   .eq('chapter_number', chapterNumber)
   .single();
 
-if (!chapterData) {
+if (!chapterDataRaw) {
   return Astro.redirect('/404');
 }
+
+const chapterData = chapterDataRaw as any;
 
 const { count: totalChapters } = await supabase
   .from('chapters')

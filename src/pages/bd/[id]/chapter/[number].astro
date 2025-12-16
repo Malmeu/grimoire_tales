@@ -4,30 +4,14 @@ import Navbar from '../../../../components/Navbar.astro';
 import BDReader from '../../../../components/BDReader';
 import { supabase } from '../../../../lib/supabase';
 
-export async function getStaticPaths() {
-  const { data: chapters } = await supabase
-    .from('chapters')
-    .select(`
-      chapter_number,
-      story_id,
-      stories!inner (id, type, status)
-    `)
-    .eq('stories.type', 'comic')
-    .eq('stories.status', 'published');
-  
-  return (chapters || []).map((ch: any) => ({
-    params: { 
-      id: ch.story_id, 
-      number: ch.chapter_number.toString() 
-    }
-  }));
-}
+// Désactiver le prerendering pour cette page (rendu SSR dynamique)
+export const prerender = false;
 
 const { id, number } = Astro.params;
 const chapterNumber = parseInt(number || '1');
 
 // Récupérer les données depuis Supabase
-const { data: bdData } = await supabase
+const { data: bdDataRaw } = await supabase
   .from('stories')
   .select(`
     *,
@@ -38,20 +22,24 @@ const { data: bdData } = await supabase
   .eq('status', 'published')
   .single();
 
-if (!bdData) {
+if (!bdDataRaw) {
   return Astro.redirect('/404');
 }
 
-const { data: chapterData } = await supabase
+const bdData = bdDataRaw as any;
+
+const { data: chapterDataRaw } = await supabase
   .from('chapters')
   .select('*')
   .eq('story_id', id)
   .eq('chapter_number', chapterNumber)
   .single();
 
-if (!chapterData) {
+if (!chapterDataRaw) {
   return Astro.redirect('/404');
 }
+
+const chapterData = chapterDataRaw as any;
 
 const { count: totalChapters } = await supabase
   .from('chapters')

@@ -5,17 +5,8 @@ import Footer from '../../components/Footer.astro';
 import CommentFeed from '../../components/CommentFeed';
 import { supabase } from '../../lib/supabase';
 
-// Générer des pages statiques pour les stories publiées
-export async function getStaticPaths() {
-  const { data: stories } = await supabase
-    .from('stories')
-    .select('slug')
-    .eq('status', 'published');
-  
-  return (stories || []).map((story: any) => ({
-    params: { slug: story.slug }
-  }));
-}
+// Désactiver le prerendering pour cette page (rendu SSR dynamique)
+export const prerender = false;
 
 const { slug } = Astro.params;
 
