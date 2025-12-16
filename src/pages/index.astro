@@ -5,6 +5,9 @@ import Footer from '../components/Footer.astro';
 import StoryCard from '../components/StoryCard.astro';
 import { supabase } from '../lib/supabase';
 
+// Désactiver le prerendering pour cette page (rendu SSR dynamique)
+export const prerender = false;
+
 // Récupérer les histoires populaires depuis Supabase
 const { data: storiesData } = await supabase
   .from('stories')
