@@ -9,7 +9,9 @@ export default defineConfig({
     tailwind()
   ],
   output: 'hybrid',
-  adapter: vercel(),
+  adapter: vercel({
+    maxDuration: 60
+  }),
   vite: {
     ssr: {
       noExternal: ['gsap']
