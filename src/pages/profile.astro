@@ -141,7 +141,7 @@ import Footer from '../components/Footer.astro';
         </section>
 
         <!-- User Stories -->
-        <section>
+        <section class="mb-12">
           <div class="flex items-center justify-between mb-6">
             <h2 class="gothic-title text-2xl">Mes Histoires</h2>
             <a href="/write" class="text-gold-old hover:text-gold-bright transition-colors flex items-center gap-2">
@@ -158,6 +158,29 @@ import Footer from '../components/Footer.astro';
               <p>Vous n'avez pas encore publié d'histoire.</p>
               <a href="/write" class="inline-block mt-4 text-gold-old hover:text-gold-bright">
                 Commencer à écrire →
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <!-- User Artworks -->
+        <section>
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="gothic-title text-2xl">Mes Œuvres d'Art</h2>
+            <a href="/art/upload" class="text-gold-old hover:text-gold-bright transition-colors flex items-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+              </svg>
+              Nouvelle œuvre
+            </a>
+          </div>
+          
+          <div id="artworks-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="text-center py-8 text-parchment/70 col-span-full">
+              <div class="text-4xl mb-2">🖼️</div>
+              <p>Vous n'avez pas encore exposé d'œuvre.</p>
+              <a href="/art/upload" class="inline-block mt-4 text-gold-old hover:text-gold-bright">
+                Exposer une œuvre →
               </a>
             </div>
           </div>
@@ -278,23 +301,124 @@ import Footer from '../components/Footer.astro';
       const storiesGrid = document.getElementById('stories-grid');
       if (storiesGrid && stories && stories.length > 0) {
         storiesGrid.innerHTML = stories.map(story => `
-          <a href="/stories/${story.slug}" class="parchment-card rounded-lg overflow-hidden group hover:border-gold-old/50 transition-all">
-            <div class="aspect-[3/4] bg-dark-purple overflow-hidden">
-              ${story.cover_url 
-                ? `<img src="${story.cover_url}" alt="${story.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">`
-                : `<div class="w-full h-full flex items-center justify-center text-6xl">📖</div>`
-              }
-            </div>
-            <div class="p-4">
-              <span class="px-2 py-1 bg-gold-old/20 text-gold-old text-xs rounded mb-2 inline-block">${story.type}</span>
-              <h3 class="text-parchment-light font-medium group-hover:text-gold-old transition-colors line-clamp-2">${story.title}</h3>
-              <div class="flex items-center gap-3 mt-2 text-sm text-parchment/60">
-                <span>👁️ ${formatNumber(story.views || 0)}</span>
-                <span>${story.status === 'published' ? '✅' : '📝'}</span>
+          <div class="parchment-card rounded-lg overflow-hidden group hover:border-gold-old/50 transition-all relative">
+            <a href="/stories/${story.slug}" class="block">
+              <div class="aspect-[3/4] bg-dark-purple overflow-hidden">
+                ${story.cover_url 
+                  ? `<img src="${story.cover_url}" alt="${story.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">`
+                  : `<div class="w-full h-full flex items-center justify-center text-6xl">📖</div>`
+                }
               </div>
+              <div class="p-4">
+                <span class="px-2 py-1 bg-gold-old/20 text-gold-old text-xs rounded mb-2 inline-block">${story.type}</span>
+                <h3 class="text-parchment-light font-medium group-hover:text-gold-old transition-colors line-clamp-2">${story.title}</h3>
+                <div class="flex items-center gap-3 mt-2 text-sm text-parchment/60">
+                  <span>👁️ ${formatNumber(story.views || 0)}</span>
+                  <span>${story.status === 'published' ? '✅' : '📝'}</span>
+                </div>
+              </div>
+            </a>
+            <!-- Actions -->
+            <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <a href="/stories/${story.slug}/edit" class="p-2 bg-black/70 rounded-full text-gold-old hover:bg-gold-old hover:text-black transition-colors" title="Modifier">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                </svg>
+              </a>
+              <button class="p-2 bg-black/70 rounded-full text-red-400 hover:bg-red-500 hover:text-white transition-colors delete-story-btn" data-story-id="${story.id}" data-story-title="${story.title}" title="Supprimer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+              </button>
             </div>
-          </a>
+          </div>
         `).join('');
+        
+        // Add delete event listeners for stories
+        document.querySelectorAll('.delete-story-btn').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const storyId = (btn as HTMLElement).dataset.storyId;
+            const storyTitle = (btn as HTMLElement).dataset.storyTitle;
+            
+            if (confirm(`Êtes-vous sûr de vouloir supprimer "${storyTitle}" ? Cette action est irréversible.`)) {
+              try {
+                const { error } = await supabase.from('stories').delete().eq('id', storyId);
+                if (error) throw error;
+                alert('Histoire supprimée avec succès.');
+                await loadProfile();
+              } catch (err) {
+                console.error('Error deleting story:', err);
+                alert('Erreur lors de la suppression.');
+              }
+            }
+          });
+        });
+      }
+      
+      // Load artworks
+      const { data: artworks } = await supabase
+        .from('artworks')
+        .select('*')
+        .eq('artist_id', currentUser.id)
+        .order('created_at', { ascending: false });
+      
+      const artworksGrid = document.getElementById('artworks-grid');
+      if (artworksGrid && artworks && artworks.length > 0) {
+        artworksGrid.innerHTML = artworks.map(artwork => `
+          <div class="parchment-card rounded-lg overflow-hidden group hover:border-gold-old/50 transition-all relative">
+            <a href="/art/${artwork.id}" class="block">
+              <div class="aspect-square bg-dark-purple overflow-hidden">
+                ${artwork.image_url 
+                  ? `<img src="${artwork.image_url}" alt="${artwork.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">`
+                  : `<div class="w-full h-full flex items-center justify-center text-6xl">🖼️</div>`
+                }
+              </div>
+              <div class="p-4">
+                <span class="px-2 py-1 bg-gold-old/20 text-gold-old text-xs rounded mb-2 inline-block">${artwork.category}</span>
+                <h3 class="text-parchment-light font-medium group-hover:text-gold-old transition-colors line-clamp-2">${artwork.title}</h3>
+                <div class="flex items-center gap-3 mt-2 text-sm text-parchment/60">
+                  <span>👁️ ${formatNumber(artwork.views || 0)}</span>
+                  <span>❤️ ${artwork.likes_count || 0}</span>
+                </div>
+              </div>
+            </a>
+            <!-- Actions -->
+            <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <a href="/art/${artwork.id}/edit" class="p-2 bg-black/70 rounded-full text-gold-old hover:bg-gold-old hover:text-black transition-colors" title="Modifier">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                </svg>
+              </a>
+              <button class="p-2 bg-black/70 rounded-full text-red-400 hover:bg-red-500 hover:text-white transition-colors delete-artwork-btn" data-artwork-id="${artwork.id}" data-artwork-title="${artwork.title}" title="Supprimer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        `).join('');
+        
+        // Add delete event listeners for artworks
+        document.querySelectorAll('.delete-artwork-btn').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const artworkId = (btn as HTMLElement).dataset.artworkId;
+            const artworkTitle = (btn as HTMLElement).dataset.artworkTitle;
+            
+            if (confirm(`Êtes-vous sûr de vouloir supprimer "${artworkTitle}" ? Cette action est irréversible.`)) {
+              try {
+                const { error } = await supabase.from('artworks').delete().eq('id', artworkId);
+                if (error) throw error;
+                alert('Œuvre supprimée avec succès.');
+                await loadProfile();
+              } catch (err) {
+                console.error('Error deleting artwork:', err);
+                alert('Erreur lors de la suppression.');
+              }
+            }
+          });
+        });
       }
       
       // Show profile

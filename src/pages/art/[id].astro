@@ -391,6 +391,9 @@ const formatViews = (num: number) => {
         .delete()
         .eq('id', existingLike.id);
       
+      // Décrémenter le compteur
+      await supabase.rpc('decrement_artwork_likes', { artwork_uuid: artworkId });
+      
       likeBtn.classList.remove('bg-gold-old/20');
     } else {
       // Ajouter le like
@@ -400,6 +403,9 @@ const formatViews = (num: number) => {
           user_id: session.user.id,
           artwork_id: artworkId
         });
+      
+      // Incrémenter le compteur
+      await supabase.rpc('increment_artwork_likes', { artwork_uuid: artworkId });
       
       likeBtn.classList.add('bg-gold-old/20');
     }

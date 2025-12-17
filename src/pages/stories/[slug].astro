@@ -27,29 +27,38 @@ if (!storyData) {
   return Astro.redirect('/404');
 }
 
+const data = storyData as any;
+
+// Incrémenter les vues
+await supabase
+  .from('stories')
+  .update({ views: (data.views || 0) + 1 })
+  .eq('id', data.id);
+
 const story = {
-  id: storyData.id,
-  title: storyData.title,
-  slug: storyData.slug,
+  id: data.id,
+  title: data.title,
+  slug: data.slug,
   author: {
-    username: storyData.users?.username || 'Anonyme',
-    avatar_url: storyData.users?.avatar_url,
-    bio: storyData.users?.bio_geek || ''
+    username: data.users?.username || 'Anonyme',
+    avatar_url: data.users?.avatar_url,
+    bio: data.users?.bio_geek || ''
   },
-  description: storyData.description || '',
-  coverUrl: storyData.cover_url,
-  genre: storyData.genre,
-  tags: storyData.tags || [],
-  type: storyData.type,
-  views: storyData.views || 0,
+  description: data.description || '',
+  coverUrl: data.cover_url,
+  genre: data.genre,
+  tags: data.tags || [],
+  type: data.type,
+  views: data.views || 0,
   rating: 0,
-  chapters: (storyData.chapters || []).map((ch: any) => ({
+  chapters: (data.chapters || []).map((ch: any) => ({
     id: ch.id,
     title: ch.title,
     number: ch.chapter_number
   })).sort((a: any, b: any) => a.number - b.number),
-  created_at: storyData.created_at,
-  updated_at: storyData.updated_at
+  created_at: data.created_at,
+  updated_at: data.updated_at,
+  author_id: data.author_id
 };
 
 const formatViews = (num: number) => {
@@ -165,11 +174,15 @@ const formatViews = (num: number) => {
                 </svg>
                 Commencer la lecture
               </a>
-              <button class="px-6 py-3 border border-gold-old/50 text-gold-old rounded hover:bg-gold-old/10 transition-colors flex items-center gap-2">
+              <button 
+                id="like-btn"
+                data-story-id={story.id}
+                class="px-6 py-3 border border-gold-old/50 text-gold-old rounded hover:bg-gold-old/10 transition-colors flex items-center gap-2"
+              >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                 </svg>
-                Ajouter aux favoris
+                <span id="like-text">Ajouter aux favoris</span>
               </button>
               <button class="px-6 py-3 border border-gold-old/50 text-gold-old rounded hover:bg-gold-old/10 transition-colors flex items-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -190,7 +203,7 @@ const formatViews = (num: number) => {
         <a 
           href={`/stories/${slug}/add-chapter`}
           class="add-chapter-btn hidden px-4 py-2 bg-gold-old/20 text-gold-old rounded hover:bg-gold-old/30 transition-colors items-center gap-2"
-          data-author-id={storyData.author_id}
+          data-author-id={story.author_id}
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -250,4 +263,78 @@ const formatViews = (num: number) => {
   }
   
   checkAuthor();
+  
+  // Gestion du bouton Like
+  const likeBtn = document.getElementById('like-btn');
+  const likeText = document.getElementById('like-text');
+  
+  async function checkLikeStatus() {
+    if (!likeBtn) return;
+    
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+    
+    const storyId = likeBtn.dataset.storyId;
+    
+    const { data: existingLike } = await supabase
+      .from('likes')
+      .select('id')
+      .eq('user_id', session.user.id)
+      .eq('story_id', storyId)
+      .single();
+    
+    if (existingLike) {
+      likeBtn.classList.add('bg-gold-old/20');
+      const svg = likeBtn.querySelector('svg');
+      if (svg) svg.setAttribute('fill', 'currentColor');
+      if (likeText) likeText.textContent = 'Dans vos favoris';
+    }
+  }
+  
+  checkLikeStatus();
+  
+  likeBtn?.addEventListener('click', async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
+      window.location.href = '/login';
+      return;
+    }
+    
+    const storyId = likeBtn.dataset.storyId;
+    
+    // Vérifier si déjà liké
+    const { data: existingLike } = await supabase
+      .from('likes')
+      .select('id')
+      .eq('user_id', session.user.id)
+      .eq('story_id', storyId)
+      .single();
+    
+    if (existingLike) {
+      // Retirer le like
+      await supabase
+        .from('likes')
+        .delete()
+        .eq('id', existingLike.id);
+      
+      likeBtn.classList.remove('bg-gold-old/20');
+      const svg = likeBtn.querySelector('svg');
+      if (svg) svg.setAttribute('fill', 'none');
+      if (likeText) likeText.textContent = 'Ajouter aux favoris';
+    } else {
+      // Ajouter le like
+      await supabase
+        .from('likes')
+        .insert({
+          user_id: session.user.id,
+          story_id: storyId
+        });
+      
+      likeBtn.classList.add('bg-gold-old/20');
+      const svg = likeBtn.querySelector('svg');
+      if (svg) svg.setAttribute('fill', 'currentColor');
+      if (likeText) likeText.textContent = 'Dans vos favoris';
+    }
+  });
 </script>

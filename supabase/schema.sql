@@ -357,3 +357,19 @@ CREATE POLICY "Artwork likes are viewable by everyone" ON public.artwork_likes
 
 CREATE POLICY "Authenticated users can manage own artwork likes" ON public.artwork_likes
   FOR ALL USING (auth.uid() = user_id);
+
+-- Fonction pour incrémenter les likes d'une œuvre
+CREATE OR REPLACE FUNCTION increment_artwork_likes(artwork_uuid UUID)
+RETURNS VOID AS $$
+BEGIN
+  UPDATE public.artworks SET likes_count = likes_count + 1 WHERE id = artwork_uuid;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Fonction pour décrémenter les likes d'une œuvre
+CREATE OR REPLACE FUNCTION decrement_artwork_likes(artwork_uuid UUID)
+RETURNS VOID AS $$
+BEGIN
+  UPDATE public.artworks SET likes_count = GREATEST(likes_count - 1, 0) WHERE id = artwork_uuid;
+END;
+$$ LANGUAGE plpgsql;
