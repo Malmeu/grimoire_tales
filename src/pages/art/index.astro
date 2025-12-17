@@ -1,0 +1,268 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import { supabase } from '../../lib/supabase';
+
+export const prerender = false;
+
+// Récupérer les œuvres d'art depuis Supabase
+const { data: artworks, error } = await supabase
+  .from('artworks')
+  .select(`
+    id,
+    title,
+    image_url,
+    description,
+    category,
+    tags,
+    views,
+    likes_count,
+    created_at,
+    artist_id,
+    users!artworks_artist_id_fkey (
+      username,
+      avatar_url
+    )
+  `)
+  .order('created_at', { ascending: false });
+
+const displayArtworks = artworks || [];
+
+const categories = [
+  { value: 'all', label: 'Toutes' },
+  { value: 'horror', label: 'Horreur' },
+  { value: 'dark_art', label: 'Art Sombre' },
+  { value: 'fantasy', label: 'Fantasy' },
+  { value: 'illustration', label: 'Illustration' },
+  { value: 'digital_art', label: 'Art Digital' },
+  { value: 'traditional', label: 'Traditionnel' },
+  { value: 'concept_art', label: 'Concept Art' },
+  { value: 'fan_art', label: 'Fan Art' },
+  { value: 'portrait', label: 'Portrait' },
+  { value: 'landscape', label: 'Paysage' },
+];
+
+const formatViews = (num: number) => {
+  if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+  if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+  return num.toString();
+};
+---
+
+<BaseLayout 
+  title="Galerie d'Art - Grimoire Tales" 
+  description="Explorez notre galerie des horreurs. Des œuvres d'art sombres et captivantes créées par des artistes talentueux."
+>
+  <Navbar />
+  
+  <main class="pt-20 pb-20 min-h-screen bg-[var(--bg-primary)]">
+    <!-- Hero Section - Style Galerie des Horreurs -->
+    <section class="relative py-20 overflow-hidden">
+      <!-- Fond atmosphérique -->
+      <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-[var(--bg-primary)] to-[var(--bg-primary)]"></div>
+      <div class="absolute inset-0 opacity-20 art-pattern"></div>
+      
+      <!-- Chandeliers décoratifs -->
+      <div class="absolute top-0 left-1/4 w-px h-32 bg-gradient-to-b from-gold-old/50 to-transparent"></div>
+      <div class="absolute top-0 right-1/4 w-px h-32 bg-gradient-to-b from-gold-old/50 to-transparent"></div>
+      
+      <div class="relative max-w-6xl mx-auto px-4 text-center">
+        <div class="mb-6">
+          <span class="text-6xl">🖼️</span>
+        </div>
+        <h1 class="gothic-title text-4xl md:text-6xl mb-4 text-gold-old">
+          La Galerie des Ombres
+        </h1>
+        <p class="text-parchment/70 text-lg max-w-2xl mx-auto mb-8 italic">
+          "Bienvenue dans notre sanctuaire artistique... Où chaque toile raconte une histoire, 
+          et chaque ombre cache un secret."
+        </p>
+        
+        <!-- Stats -->
+        <div class="flex justify-center gap-8 md:gap-16">
+          <div class="text-center">
+            <div class="text-3xl font-bold text-gold-old">{displayArtworks.length}</div>
+            <div class="text-parchment/50 text-sm">Œuvres exposées</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-gold-old">
+              {formatViews(displayArtworks.reduce((acc: number, a: any) => acc + (a.views || 0), 0))}
+            </div>
+            <div class="text-parchment/50 text-sm">Contemplations</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filtres par catégorie -->
+    <section class="max-w-6xl mx-auto px-4 py-8">
+      <div class="flex flex-wrap justify-center gap-3 mb-8">
+        {categories.map((cat, idx) => (
+          <button 
+            class={`px-4 py-2 rounded-full text-sm transition-all border ${
+              idx === 0 
+                ? 'bg-gold-old/20 text-gold-old border-gold-old/50' 
+                : 'bg-transparent text-parchment/70 border-parchment/20 hover:border-gold-old/50 hover:text-gold-old'
+            }`}
+            data-category={cat.value}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
+      
+      <!-- Bouton Ajouter une œuvre -->
+      <div class="flex justify-center mb-12">
+        <a 
+          href="/art/upload" 
+          class="glow-button px-6 py-3 inline-flex items-center gap-2"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          Exposer une œuvre
+        </a>
+      </div>
+    </section>
+
+    <!-- Galerie Style Musée -->
+    <section class="max-w-7xl mx-auto px-4">
+      <!-- Mur de la galerie -->
+      <div class="relative">
+        <!-- Texture de mur -->
+        <div class="absolute inset-0 bg-gradient-to-b from-[#1a0d1e] to-[#0d0610] rounded-3xl -z-10"></div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 p-8 md:p-12">
+          {displayArtworks.map((artwork: any) => (
+            <div class="group relative">
+              <!-- Cadre du tableau -->
+              <div class="relative bg-gradient-to-br from-[#8B7355] via-[#6B5344] to-[#4A3728] p-3 md:p-4 rounded-lg shadow-2xl transform transition-all duration-500 hover:scale-[1.02] hover:shadow-gold-old/20">
+                <!-- Bordure intérieure dorée -->
+                <div class="absolute inset-2 border border-gold-old/30 rounded pointer-events-none"></div>
+                
+                <!-- L'œuvre -->
+                <a href={`/art/${artwork.id}`} class="block relative overflow-hidden rounded">
+                  <div class="aspect-[4/5] overflow-hidden">
+                    <img 
+                      src={artwork.image_url || 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=800&h=1000&fit=crop'} 
+                      alt={artwork.title}
+                      class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      loading="lazy"
+                    />
+                  </div>
+                  
+                  <!-- Overlay au survol -->
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                    <p class="text-parchment/80 text-sm line-clamp-3 mb-2">
+                      {artwork.description || "Une œuvre mystérieuse..."}
+                    </p>
+                    <div class="flex items-center gap-3 text-xs text-parchment/60">
+                      <span class="flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                        {formatViews(artwork.views || 0)}
+                      </span>
+                      <span class="flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                        {artwork.likes_count || 0}
+                      </span>
+                    </div>
+                  </div>
+                </a>
+              </div>
+              
+              <!-- Plaque du tableau -->
+              <div class="mt-4 text-center">
+                <div class="inline-block bg-gradient-to-r from-[#2a1a1f] via-[#3d2832] to-[#2a1a1f] px-6 py-3 rounded border border-gold-old/30 shadow-lg">
+                  <h3 class="text-gold-old font-semibold text-sm md:text-base mb-1 line-clamp-1">
+                    {artwork.title}
+                  </h3>
+                  <p class="text-parchment/60 text-xs italic">
+                    par {artwork.users?.username || 'Artiste Anonyme'}
+                  </p>
+                  <div class="mt-2 flex justify-center gap-2">
+                    <span class="px-2 py-0.5 bg-gold-old/10 text-gold-old/80 text-xs rounded-full">
+                      {categories.find(c => c.value === artwork.category)?.label || artwork.category}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Effet de lumière spot -->
+              <div class="absolute -top-8 left-1/2 -translate-x-1/2 w-32 h-32 bg-gold-old/5 blur-3xl rounded-full pointer-events-none group-hover:bg-gold-old/10 transition-colors duration-500"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      {displayArtworks.length === 0 && (
+        <div class="text-center py-20">
+          <div class="text-8xl mb-6 opacity-50">🖼️</div>
+          <h3 class="text-2xl text-gold-old mb-3 gothic-title">La galerie attend ses premières œuvres...</h3>
+          <p class="text-parchment/60 mb-8 max-w-md mx-auto">
+            Soyez le premier artiste à exposer dans notre sanctuaire. Vos créations méritent d'être admirées.
+          </p>
+          <a href="/art/upload" class="glow-button px-8 py-4 text-lg inline-flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Exposer ma première œuvre
+          </a>
+        </div>
+      )}
+    </section>
+
+    <!-- CTA Section -->
+    <section class="max-w-4xl mx-auto px-4 py-20">
+      <div class="relative parchment-card rounded-2xl p-8 md:p-12 text-center overflow-hidden">
+        <!-- Décoration -->
+        <div class="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-gold-old/30 rounded-tl-2xl"></div>
+        <div class="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-gold-old/30 rounded-br-2xl"></div>
+        
+        <h2 class="gothic-title text-2xl md:text-3xl mb-4 text-gold-old">
+          Vous êtes artiste ?
+        </h2>
+        <p class="text-parchment/70 max-w-xl mx-auto mb-8">
+          Rejoignez notre communauté d'artistes. Exposez vos créations dans notre galerie, 
+          recevez des retours et inspirez d'autres créateurs.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="/art/upload" class="glow-button px-8 py-3 inline-flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            Soumettre une œuvre
+          </a>
+          <a href="/register" class="px-8 py-3 border border-gold-old/50 text-gold-old rounded-lg hover:bg-gold-old/10 transition-colors inline-flex items-center justify-center gap-2">
+            Créer un compte artiste
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+  
+  <Footer />
+</BaseLayout>
+
+<style>
+  /* Pattern décoratif */
+  .art-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30z' fill='none' stroke='%23e8c07b' stroke-width='0.5' opacity='0.3'/%3E%3C/svg%3E");
+  }
+  
+  /* Effet de vieillissement sur les cadres */
+  .group:hover .frame-glow {
+    box-shadow: 0 0 30px rgba(232, 192, 123, 0.2);
+  }
+  
+  /* Animation subtile des spots */
+  @keyframes flicker {
+    0%, 100% { opacity: 0.05; }
+    50% { opacity: 0.1; }
+  }
+</style>

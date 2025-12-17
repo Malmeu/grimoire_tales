@@ -4,9 +4,15 @@ import AuthButtons from './AuthButtons';
 
 const navLinks = [
   { href: '/', label: 'Accueil' },
-  { href: '/catalogue', label: 'Catalogue' },
-  { href: '/novels', label: 'Novels' },
-  { href: '/comics', label: 'BD' },
+  { 
+    label: 'Catalogue', 
+    submenu: [
+      { href: '/novels', label: 'Novels' },
+      { href: '/comics', label: 'BD' },
+    ]
+  },
+  { href: '/art', label: 'Art' },
+  { href: '/podcast', label: 'Podcast' },
   { href: '/leaderboard', label: 'Classement' },
 ];
 ---
@@ -41,13 +47,34 @@ const navLinks = [
       <!-- Navigation Links -->
       <div class="hidden md:flex items-center gap-8">
         {navLinks.map(link => (
-          <a 
-            href={link.href}
-            class="text-parchment-light hover:text-gold-old transition-colors duration-300 relative group"
-          >
-            {link.label}
-            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold-old group-hover:w-full transition-all duration-300"></span>
-          </a>
+          link.submenu ? (
+            <div class="relative group/dropdown">
+              <button class="text-parchment-light hover:text-gold-old transition-colors duration-300 flex items-center gap-1">
+                {link.label}
+                <svg class="w-4 h-4 transition-transform group-hover/dropdown:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div class="absolute top-full left-0 mt-2 w-48 glass-dark rounded-lg border border-gold-old/20 opacity-0 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:visible transition-all duration-300 z-50">
+                {link.submenu.map(sublink => (
+                  <a 
+                    href={sublink.href}
+                    class="block px-4 py-3 text-parchment-light hover:text-gold-old hover:bg-gold-old/10 transition-colors first:rounded-t-lg last:rounded-b-lg"
+                  >
+                    {sublink.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <a 
+              href={link.href}
+              class="text-parchment-light hover:text-gold-old transition-colors duration-300 relative group"
+            >
+              {link.label}
+              <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold-old group-hover:w-full transition-all duration-300"></span>
+            </a>
+          )
         ))}
       </div>
 
@@ -73,12 +100,28 @@ const navLinks = [
   <div id="mobile-menu" class="hidden md:hidden glass-dark border-t border-gold-old/20">
     <div class="px-4 py-4 space-y-3">
       {navLinks.map(link => (
-        <a 
-          href={link.href}
-          class="block py-2 text-parchment-light hover:text-gold-old transition-colors"
-        >
-          {link.label}
-        </a>
+        link.submenu ? (
+          <div class="space-y-2">
+            <span class="block py-2 text-gold-old font-semibold">{link.label}</span>
+            <div class="pl-4 space-y-2 border-l border-gold-old/30">
+              {link.submenu.map(sublink => (
+                <a 
+                  href={sublink.href}
+                  class="block py-2 text-parchment-light hover:text-gold-old transition-colors"
+                >
+                  {sublink.label}
+                </a>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <a 
+            href={link.href}
+            class="block py-2 text-parchment-light hover:text-gold-old transition-colors"
+          >
+            {link.label}
+          </a>
+        )
       ))}
     </div>
   </div>

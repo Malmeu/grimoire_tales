@@ -292,3 +292,68 @@ USING (
   bucket_id = 'images' 
   AND auth.uid()::text = (storage.foldername(name))[1]
 );
+
+-- ============================================
+-- TABLE ARTWORKS (Galerie d'art)
+-- ============================================
+
+-- Table des œuvres d'art
+CREATE TABLE public.artworks (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  title TEXT NOT NULL,
+  artist_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+  image_url TEXT NOT NULL,
+  description TEXT,
+  category TEXT NOT NULL CHECK (category IN ('illustration', 'digital_art', 'traditional', 'concept_art', 'fan_art', 'horror', 'dark_art', 'fantasy', 'portrait', 'landscape')),
+  tags TEXT[] DEFAULT '{}',
+  views INTEGER DEFAULT 0,
+  likes_count INTEGER DEFAULT 0,
+  is_featured BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Index pour les performances
+CREATE INDEX idx_artworks_artist ON public.artworks(artist_id);
+CREATE INDEX idx_artworks_category ON public.artworks(category);
+CREATE INDEX idx_artworks_featured ON public.artworks(is_featured);
+
+-- Trigger pour updated_at
+CREATE TRIGGER update_artworks_updated_at
+  BEFORE UPDATE ON public.artworks
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+-- Enable RLS
+ALTER TABLE public.artworks ENABLE ROW LEVEL SECURITY;
+
+-- Artworks policies
+CREATE POLICY "Artworks are viewable by everyone" ON public.artworks
+  FOR SELECT USING (true);
+
+CREATE POLICY "Users can create artworks" ON public.artworks
+  FOR INSERT WITH CHECK (auth.uid() = artist_id);
+
+CREATE POLICY "Users can update own artworks" ON public.artworks
+  FOR UPDATE USING (auth.uid() = artist_id);
+
+CREATE POLICY "Users can delete own artworks" ON public.artworks
+  FOR DELETE USING (auth.uid() = artist_id);
+
+-- Table des likes pour les artworks
+CREATE TABLE public.artwork_likes (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+  artwork_id UUID NOT NULL REFERENCES public.artworks(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(user_id, artwork_id)
+);
+
+-- Enable RLS
+ALTER TABLE public.artwork_likes ENABLE ROW LEVEL SECURITY;
+
+-- Artwork likes policies
+CREATE POLICY "Artwork likes are viewable by everyone" ON public.artwork_likes
+  FOR SELECT USING (true);
+
+CREATE POLICY "Authenticated users can manage own artwork likes" ON public.artwork_likes
+  FOR ALL USING (auth.uid() = user_id);

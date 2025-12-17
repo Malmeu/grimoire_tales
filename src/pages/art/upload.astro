@@ -1,0 +1,332 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+
+export const prerender = false;
+
+const categories = [
+  { value: 'illustration', label: 'Illustration' },
+  { value: 'digital_art', label: 'Art Digital' },
+  { value: 'traditional', label: 'Traditionnel' },
+  { value: 'concept_art', label: 'Concept Art' },
+  { value: 'fan_art', label: 'Fan Art' },
+  { value: 'horror', label: 'Horreur' },
+  { value: 'dark_art', label: 'Art Sombre' },
+  { value: 'fantasy', label: 'Fantasy' },
+  { value: 'portrait', label: 'Portrait' },
+  { value: 'landscape', label: 'Paysage' },
+];
+---
+
+<BaseLayout 
+  title="Exposer une œuvre - Grimoire Tales" 
+  description="Soumettez votre œuvre d'art pour l'exposer dans notre galerie."
+>
+  <Navbar />
+  
+  <main class="pt-24 pb-20 min-h-screen">
+    <div class="max-w-2xl mx-auto px-4">
+      <!-- Header -->
+      <div class="text-center mb-10">
+        <h1 class="gothic-title text-3xl md:text-4xl mb-4 text-gold-old">
+          Exposer une œuvre
+        </h1>
+        <p class="text-parchment/70">
+          Partagez votre création avec notre communauté d'artistes et d'admirateurs.
+        </p>
+      </div>
+      
+      <!-- Formulaire -->
+      <form id="upload-form" class="parchment-card rounded-2xl p-6 md:p-8 space-y-6">
+        <!-- Zone d'upload image -->
+        <div>
+          <label class="block text-parchment mb-2 font-semibold">Image de l'œuvre *</label>
+          <div 
+            id="drop-zone"
+            class="border-2 border-dashed border-gold-old/30 rounded-xl p-8 text-center cursor-pointer hover:border-gold-old/60 transition-colors"
+          >
+            <div id="preview-container" class="hidden">
+              <img id="image-preview" class="max-h-64 mx-auto rounded-lg mb-4" alt="Aperçu" />
+              <button type="button" id="remove-image" class="text-red-400 hover:text-red-300 text-sm">
+                Supprimer l'image
+              </button>
+            </div>
+            <div id="upload-placeholder">
+              <svg class="w-12 h-12 mx-auto text-gold-old/50 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              <p class="text-parchment/70 mb-2">Glissez-déposez votre image ici</p>
+              <p class="text-parchment/50 text-sm">ou cliquez pour sélectionner</p>
+              <p class="text-parchment/40 text-xs mt-2">PNG, JPG, WEBP (max 10MB)</p>
+            </div>
+            <input type="file" id="image-input" accept="image/*" class="hidden" />
+          </div>
+        </div>
+        
+        <!-- Titre -->
+        <div>
+          <label for="title" class="block text-parchment mb-2 font-semibold">Titre de l'œuvre *</label>
+          <input 
+            type="text" 
+            id="title" 
+            name="title"
+            required
+            placeholder="Ex: Le Gardien des Ombres"
+            class="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--card-border)] rounded-lg text-[var(--text-primary)] placeholder-parchment/40 focus:border-gold-old focus:outline-none transition-colors"
+          />
+        </div>
+        
+        <!-- Catégorie -->
+        <div>
+          <label for="category" class="block text-parchment mb-2 font-semibold">Catégorie *</label>
+          <select 
+            id="category" 
+            name="category"
+            required
+            class="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--card-border)] rounded-lg text-[var(--text-primary)] focus:border-gold-old focus:outline-none transition-colors"
+          >
+            <option value="">Sélectionnez une catégorie</option>
+            {categories.map(cat => (
+              <option value={cat.value}>{cat.label}</option>
+            ))}
+          </select>
+        </div>
+        
+        <!-- Description -->
+        <div>
+          <label for="description" class="block text-parchment mb-2 font-semibold">Description</label>
+          <textarea 
+            id="description" 
+            name="description"
+            rows="4"
+            placeholder="Décrivez votre œuvre, son inspiration, sa signification..."
+            class="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--card-border)] rounded-lg text-[var(--text-primary)] placeholder-parchment/40 focus:border-gold-old focus:outline-none transition-colors resize-none"
+          ></textarea>
+        </div>
+        
+        <!-- Tags -->
+        <div>
+          <label for="tags" class="block text-parchment mb-2 font-semibold">Tags</label>
+          <input 
+            type="text" 
+            id="tags" 
+            name="tags"
+            placeholder="dark, fantasy, creature (séparés par des virgules)"
+            class="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--card-border)] rounded-lg text-[var(--text-primary)] placeholder-parchment/40 focus:border-gold-old focus:outline-none transition-colors"
+          />
+          <p class="text-parchment/50 text-xs mt-1">Séparez les tags par des virgules</p>
+        </div>
+        
+        <!-- Message d'erreur -->
+        <div id="error-message" class="hidden p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300 text-sm"></div>
+        
+        <!-- Message de succès -->
+        <div id="success-message" class="hidden p-4 bg-green-500/20 border border-green-500/50 rounded-lg text-green-300 text-sm"></div>
+        
+        <!-- Boutons -->
+        <div class="flex gap-4 pt-4">
+          <a href="/art" class="flex-1 px-6 py-3 border border-gold-old/50 text-gold-old rounded-lg hover:bg-gold-old/10 transition-colors text-center">
+            Annuler
+          </a>
+          <button 
+            type="submit" 
+            id="submit-btn"
+            class="flex-1 glow-button px-6 py-3 inline-flex items-center justify-center gap-2"
+          >
+            <span id="submit-text">Exposer l'œuvre</span>
+            <span id="submit-loading" class="hidden">
+              <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+  
+  <Footer />
+</BaseLayout>
+
+<script>
+  import { createClient } from '@supabase/supabase-js';
+  
+  const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+  const supabase = createClient(supabaseUrl, supabaseAnonKey);
+  
+  const dropZone = document.getElementById('drop-zone');
+  const imageInput = document.getElementById('image-input') as HTMLInputElement;
+  const previewContainer = document.getElementById('preview-container');
+  const uploadPlaceholder = document.getElementById('upload-placeholder');
+  const imagePreview = document.getElementById('image-preview') as HTMLImageElement;
+  const removeImageBtn = document.getElementById('remove-image');
+  const form = document.getElementById('upload-form') as HTMLFormElement;
+  const errorMessage = document.getElementById('error-message');
+  const successMessage = document.getElementById('success-message');
+  const submitBtn = document.getElementById('submit-btn');
+  const submitText = document.getElementById('submit-text');
+  const submitLoading = document.getElementById('submit-loading');
+  
+  let selectedFile: File | null = null;
+  
+  // Drag and drop
+  dropZone?.addEventListener('click', () => imageInput?.click());
+  
+  dropZone?.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('border-gold-old', 'bg-gold-old/5');
+  });
+  
+  dropZone?.addEventListener('dragleave', () => {
+    dropZone.classList.remove('border-gold-old', 'bg-gold-old/5');
+  });
+  
+  dropZone?.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('border-gold-old', 'bg-gold-old/5');
+    const files = e.dataTransfer?.files;
+    if (files && files[0]) {
+      handleFile(files[0]);
+    }
+  });
+  
+  imageInput?.addEventListener('change', () => {
+    if (imageInput.files && imageInput.files[0]) {
+      handleFile(imageInput.files[0]);
+    }
+  });
+  
+  function handleFile(file: File) {
+    if (!file.type.startsWith('image/')) {
+      showError('Veuillez sélectionner une image valide.');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      showError('L\'image ne doit pas dépasser 10MB.');
+      return;
+    }
+    
+    selectedFile = file;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (imagePreview && e.target?.result) {
+        imagePreview.src = e.target.result as string;
+        previewContainer?.classList.remove('hidden');
+        uploadPlaceholder?.classList.add('hidden');
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+  
+  removeImageBtn?.addEventListener('click', () => {
+    selectedFile = null;
+    if (imageInput) imageInput.value = '';
+    previewContainer?.classList.add('hidden');
+    uploadPlaceholder?.classList.remove('hidden');
+  });
+  
+  function showError(message: string) {
+    if (errorMessage) {
+      errorMessage.textContent = message;
+      errorMessage.classList.remove('hidden');
+    }
+    successMessage?.classList.add('hidden');
+  }
+  
+  function showSuccess(message: string) {
+    if (successMessage) {
+      successMessage.textContent = message;
+      successMessage.classList.remove('hidden');
+    }
+    errorMessage?.classList.add('hidden');
+  }
+  
+  function setLoading(loading: boolean) {
+    if (submitBtn) {
+      (submitBtn as HTMLButtonElement).disabled = loading;
+    }
+    submitText?.classList.toggle('hidden', loading);
+    submitLoading?.classList.toggle('hidden', !loading);
+  }
+  
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    errorMessage?.classList.add('hidden');
+    successMessage?.classList.add('hidden');
+    
+    // Vérifier l'authentification
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      showError('Vous devez être connecté pour exposer une œuvre.');
+      return;
+    }
+    
+    if (!selectedFile) {
+      showError('Veuillez sélectionner une image.');
+      return;
+    }
+    
+    const formData = new FormData(form);
+    const title = formData.get('title') as string;
+    const category = formData.get('category') as string;
+    const description = formData.get('description') as string;
+    const tagsStr = formData.get('tags') as string;
+    
+    if (!title || !category) {
+      showError('Veuillez remplir tous les champs obligatoires.');
+      return;
+    }
+    
+    setLoading(true);
+    
+    try {
+      // Upload de l'image
+      const fileExt = selectedFile.name.split('.').pop();
+      const fileName = `${session.user.id}/${Date.now()}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('images')
+        .upload(`artworks/${fileName}`, selectedFile);
+      
+      if (uploadError) throw uploadError;
+      
+      // Obtenir l'URL publique
+      const { data: { publicUrl } } = supabase.storage
+        .from('images')
+        .getPublicUrl(`artworks/${fileName}`);
+      
+      // Créer l'entrée dans la base de données
+      const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(t => t) : [];
+      
+      const { error: insertError } = await supabase
+        .from('artworks')
+        .insert({
+          title,
+          category,
+          description,
+          tags,
+          image_url: publicUrl,
+          artist_id: session.user.id
+        });
+      
+      if (insertError) throw insertError;
+      
+      showSuccess('Votre œuvre a été exposée avec succès !');
+      
+      // Rediriger vers la galerie après 2 secondes
+      setTimeout(() => {
+        window.location.href = '/art';
+      }, 2000);
+      
+    } catch (error: any) {
+      console.error('Erreur:', error);
+      showError(error.message || 'Une erreur est survenue lors de l\'upload.');
+    } finally {
+      setLoading(false);
+    }
+  });
+</script>

@@ -1,0 +1,122 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout 
+  title="Podcast - Grimoire Tales" 
+  description="Bientôt disponible : Le podcast Grimoire Tales. Des discussions passionnantes sur l'art, la littérature et la créativité."
+>
+  <Navbar />
+  
+  <main class="pt-20 pb-20 min-h-screen flex items-center justify-center">
+    <div class="max-w-2xl mx-auto px-4 text-center">
+      <!-- Illustration -->
+      <div class="relative mb-10">
+        <div class="text-9xl opacity-80">🎙️</div>
+        <div class="absolute inset-0 bg-gold-old/10 blur-3xl rounded-full"></div>
+      </div>
+      
+      <!-- Titre -->
+      <h1 class="gothic-title text-4xl md:text-5xl mb-6 text-gold-old">
+        Podcast
+      </h1>
+      
+      <!-- Badge "À venir" -->
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-gold-old/20 border border-gold-old/40 rounded-full mb-8">
+        <span class="w-2 h-2 bg-gold-old rounded-full animate-pulse"></span>
+        <span class="text-gold-old font-semibold">À venir</span>
+      </div>
+      
+      <!-- Description -->
+      <p class="text-parchment/70 text-lg mb-8 max-w-lg mx-auto">
+        Nous préparons quelque chose de spécial pour vous. Le podcast Grimoire Tales 
+        vous emmènera dans les coulisses de la création artistique et littéraire.
+      </p>
+      
+      <!-- Ce qui arrive -->
+      <div class="parchment-card rounded-2xl p-8 mb-10">
+        <h2 class="text-xl font-semibold text-parchment mb-6">Ce qui vous attend...</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+          <div class="flex flex-col items-center text-center">
+            <div class="w-14 h-14 bg-gold-old/20 rounded-full flex items-center justify-center mb-3">
+              <svg class="w-7 h-7 text-gold-old" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+              </svg>
+            </div>
+            <h3 class="text-gold-old font-semibold mb-2">Interviews</h3>
+            <p class="text-parchment/60 text-sm">Rencontres avec des artistes et auteurs de la communauté</p>
+          </div>
+          
+          <div class="flex flex-col items-center text-center">
+            <div class="w-14 h-14 bg-gold-old/20 rounded-full flex items-center justify-center mb-3">
+              <svg class="w-7 h-7 text-gold-old" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+              </svg>
+            </div>
+            <h3 class="text-gold-old font-semibold mb-2">Conseils créatifs</h3>
+            <p class="text-parchment/60 text-sm">Astuces et techniques pour améliorer votre art</p>
+          </div>
+          
+          <div class="flex flex-col items-center text-center">
+            <div class="w-14 h-14 bg-gold-old/20 rounded-full flex items-center justify-center mb-3">
+              <svg class="w-7 h-7 text-gold-old" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+              </svg>
+            </div>
+            <h3 class="text-gold-old font-semibold mb-2">Lectures</h3>
+            <p class="text-parchment/60 text-sm">Extraits lus des meilleures œuvres de la plateforme</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Newsletter -->
+      <div class="parchment-card rounded-2xl p-8">
+        <h3 class="text-lg font-semibold text-parchment mb-4">
+          Soyez informé du lancement
+        </h3>
+        <p class="text-parchment/60 text-sm mb-6">
+          Inscrivez-vous pour recevoir une notification dès que le podcast sera disponible.
+        </p>
+        <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+          <input 
+            type="email" 
+            placeholder="votre@email.com"
+            class="flex-1 px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--card-border)] rounded-lg text-[var(--text-primary)] placeholder-parchment/40 focus:border-gold-old focus:outline-none transition-colors"
+          />
+          <button 
+            type="submit"
+            class="glow-button px-6 py-3 whitespace-nowrap"
+          >
+            Me notifier
+          </button>
+        </form>
+      </div>
+      
+      <!-- Retour -->
+      <a 
+        href="/" 
+        class="inline-flex items-center gap-2 mt-10 text-parchment/60 hover:text-gold-old transition-colors"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Retour à l'accueil
+      </a>
+    </div>
+  </main>
+  
+  <Footer />
+</BaseLayout>
+
+<style>
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+</style>
